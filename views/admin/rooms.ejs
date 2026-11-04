@@ -1,0 +1,116 @@
+<%- include('partials/head') %>
+
+<div class="admin-page-head">
+  <div>
+    <span class="admin-eyebrow">Inventory</span>
+    <h1>Rooms &amp; Suites</h1>
+    <p>Forty keys across eleven categories. Update housekeeping status and room assignments.</p>
+  </div>
+  <div class="admin-actions">
+    <a class="admin-btn admin-btn-ghost" href="/admin/categories"><i data-lucide="layers"></i> Room categories</a>
+    <a class="admin-btn admin-btn-gold" href="#addRoom"><i data-lucide="plus"></i> Add room</a>
+  </div>
+</div>
+
+<div class="admin-filter-bar">
+  <div class="admin-tabs" role="tablist" aria-label="Filter rooms by status">
+    <% const roomTabs = [
+      ['all', 'All rooms', counts.all],
+      ['available', 'Available', counts.available],
+      ['occupied', 'Occupied', counts.occupied],
+      ['reserved', 'Reserved', counts.reserved],
+      ['maintenance', 'Maintenance', counts.maintenance]
+    ]; %>
+    <% roomTabs.forEach(function(tab) { %>
+      <a class="admin-tab <%= status === tab[0] ? 'is-active' : '' %>" href="/admin/rooms?status=<%= tab[0] %>"><%= tab[1] %><span><%= tab[2] %></span></a>
+    <% }); %>
+  </div>
+  <span class="admin-help"><i data-lucide="info"></i> Status changes save instantly.</span>
+</div>
+
+<section class="panel">
+  <div class="panel-head">
+    <div>
+      <span class="panel-eyebrow"><%= rooms.length %> room<%= rooms.length === 1 ? '' : 's' %></span>
+      <h2 class="panel-title"><%= status === 'all' ? 'Room inventory' : status + ' rooms' %></h2>
+    </div>
+  </div>
+  <% if (rooms.length) { %>
+    <div class="table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr><th>Room</th><th>Category</th><th>Floor</th><th>Rate</th><th>Notes</th><th>Status</th><th class="cell-action">Manage</th></tr>
+        </thead>
+        <tbody>
+          <% rooms.forEach(function(room) { %>
+            <tr>
+              <td><a class="table-ref" href="/admin/rooms/<%= room.id %>">Room <%= room.room_number %></a></td>
+              <td><span class="table-strong"><%= room.category_name %></span></td>
+              <td>Level <%= room.floor %></td>
+              <td class="table-money"><%= money(room.price) %></td>
+              <td><span class="table-sub"><%= room.notes || '—' %></span></td>
+              <td>
+                <form class="inline-status" action="/admin/rooms/<%= room.id %>/status" method="post">
+                  <select name="status" class="admin-select-mini" aria-label="Status for room <%= room.room_number %>" data-auto-submit>
+                    <% ['available','occupied','reserved','maintenance'].forEach(function(s) { %>
+                      <option value="<%= s %>" <%= room.status === s ? 'selected' : '' %>><%= s %></option>
+                    <% }); %>
+                  </select>
+                  <span class="room-dot <%= room.status %>"></span>
+                </form>
+              </td>
+              <td class="cell-action"><a class="admin-icon-btn" href="/admin/rooms/<%= room.id %>" aria-label="Manage room <%= room.room_number %>"><i data-lucide="arrow-up-right"></i></a></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  <% } else { %>
+    <div class="admin-empty"><i data-lucide="bed-double"></i><h3>No rooms in this view</h3><p>Try another status filter.</p></div>
+  <% } %>
+</section>
+
+<section class="panel" id="addRoom">
+  <div class="panel-head">
+    <div>
+      <span class="panel-eyebrow">New key</span>
+      <h2 class="panel-title">Add a room</h2>
+    </div>
+  </div>
+  <div class="panel-body">
+    <form action="/admin/rooms" method="post" class="admin-form-grid">
+      <div class="admin-field">
+        <label class="admin-label" for="roomNumber">Room number</label>
+        <input class="admin-input" id="roomNumber" name="room_number" placeholder="e.g. 412" required>
+      </div>
+      <div class="admin-field">
+        <label class="admin-label" for="roomCategory">Category</label>
+        <select class="admin-input" id="roomCategory" name="category_id" required>
+          <% categories.forEach(function(cat) { %><option value="<%= cat.id %>"><%= cat.name %></option><% }); %>
+        </select>
+      </div>
+      <div class="admin-field">
+        <label class="admin-label" for="roomFloor">Floor</label>
+        <input class="admin-input" id="roomFloor" name="floor" type="number" min="0" max="30" value="4" required>
+      </div>
+      <div class="admin-field">
+        <label class="admin-label" for="roomStatus">Initial status</label>
+        <select class="admin-input" id="roomStatus" name="status">
+          <option value="available">Available</option>
+          <option value="reserved">Reserved</option>
+          <option value="occupied">Occupied</option>
+          <option value="maintenance">Maintenance</option>
+        </select>
+      </div>
+      <div class="admin-field span-2">
+        <label class="admin-label" for="roomNotes">Housekeeping note</label>
+        <input class="admin-input" id="roomNotes" name="notes" placeholder="Optional — e.g. corner room, garden aspect">
+      </div>
+      <div class="admin-form-actions span-2">
+        <button class="admin-btn admin-btn-gold" type="submit"><i data-lucide="plus"></i> Add room to inventory</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<%- include('partials/foot') %>

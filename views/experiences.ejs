@@ -1,0 +1,98 @@
+<%
+  const title = 'Experiences — Grand Aurelia Hotel & Resort';
+  const metaDescription = 'Curated Grand Aurelia experiences: private dining, Himalayan spa rituals, sunrise hikes, city discovery and bespoke days in Islamabad.';
+%>
+<%- include('partials/head') %>
+
+<section class="page-hero">
+  <div class="page-hero-image">
+    <img src="/images/exp-honeymoon.jpg" alt="A private candlelit dinner arranged by Grand Aurelia">
+  </div>
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a><span>/</span><span>Experiences</span>
+    </nav>
+    <h1>Days worth <em>remembering.</em></h1>
+    <p class="hero-sub">
+      A private dinner in the kitchen garden. A sunrise trail through the Margalla Hills.
+      A city discovered with someone who knows its quieter corners. Choose a day, or let us
+      compose one around you.
+    </p>
+    <div class="page-hero-meta">
+      <span><i data-lucide="compass"></i> <%= experiences.length %> curated experiences</span>
+      <span><i data-lucide="users"></i> Private &amp; small group</span>
+      <span><i data-lucide="sparkles"></i> Bespoke itineraries</span>
+    </div>
+  </div>
+</section>
+
+<section class="experiences-page">
+  <div class="container">
+    <div class="section-header" style="margin-bottom:34px;">
+      <div>
+        <span class="eyebrow">Curated days</span>
+        <h2 class="section-heading" style="margin-top:14px;">Choose your <em>kind of day.</em></h2>
+      </div>
+      <div class="section-aside">
+        <p>Every experience is hosted privately, arranged around your timing, and can be adapted for families, couples or a small group of friends.</p>
+      </div>
+    </div>
+
+    <div class="exp-filter" role="group" aria-label="Filter experiences">
+      <button type="button" class="filter-chip is-active" data-exp-filter="all">All Experiences</button>
+      <% categories.forEach(function(cat) { %>
+        <button type="button" class="filter-chip" data-exp-filter="<%= cat %>"><%= cat %></button>
+      <% }); %>
+    </div>
+
+    <div class="experience-grid" id="experienceGrid">
+      <% experiences.forEach(function(exp) { %>
+        <article class="experience-card" data-exp-card data-category="<%= exp.category %>" data-reveal="fade-up">
+          <div class="experience-card-image">
+            <img src="<%= exp.image %>" alt="<%= exp.title %>" loading="lazy">
+            <span class="exp-duration"><i data-lucide="clock"></i> <%= exp.duration %></span>
+          </div>
+          <div class="experience-card-body">
+            <span class="eyebrow"><%= exp.category %></span>
+            <h3><%= exp.title %></h3>
+            <p><%= exp.description %></p>
+            <ul class="exp-includes">
+              <% exp.includes.slice(0, 3).forEach(function(item) { %>
+                <li><i data-lucide="check"></i> <%= item %></li>
+              <% }); %>
+            </ul>
+            <div class="exp-card-foot">
+              <div class="exp-price">
+                <%= money(exp.price) %>
+                <small><%= exp.price_label %></small>
+              </div>
+              <button type="button" class="exp-enquire"
+                      data-enquiry
+                      data-enquiry-type="experience"
+                      data-enquiry-subject="<%= exp.title %>"
+                      data-enquiry-details="<%= exp.slug %>">
+                Enquire <i data-lucide="arrow-up-right"></i>
+              </button>
+            </div>
+          </div>
+        </article>
+      <% }); %>
+    </div>
+
+    <p class="experiences-note">
+      Experiences are subject to availability and weather. Prices are indicative and exclusive of taxes.
+      <a href="/contact" style="border-bottom:1px solid rgba(20,33,43,.25);">Speak with our concierge</a> to compose something entirely your own.
+    </p>
+  </div>
+</section>
+
+<section class="section-ivory" style="padding:0 0 110px;">
+  <div class="container">
+    <div class="rooms-note" style="margin-top:0;">
+      <p>Staying with us? Add an experience to your reservation and we will arrange the rest.</p>
+      <a class="btn btn-outline" href="/booking">Reserve Your Stay <i data-lucide="arrow-up-right"></i></a>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

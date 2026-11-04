@@ -1,0 +1,129 @@
+<%
+  const title = 'Guest Services — Grand Aurelia Hotel & Resort';
+  const metaDescription = 'Express check-in, check-out and in-stay requests at Grand Aurelia. Housekeeping, in-room dining, concierge, transfers and more.';
+%>
+<%- include('partials/head') %>
+
+<section class="page-hero">
+  <div class="page-hero-image">
+    <img src="/images/resort-02.jpg" alt="The concierge desk in the Grand Aurelia lobby">
+  </div>
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a><span>/</span><span>Guest Services</span>
+    </nav>
+    <h1>At your <em>service.</em></h1>
+    <p class="hero-sub">
+      Arrive without waiting, leave without fuss, and ask for anything in between. These demo
+      forms are connected to our reservations system so you can see how it works.
+    </p>
+    <div class="page-hero-meta">
+      <span><i data-lucide="concierge-bell"></i> Reception · 24 hours</span>
+      <span><i data-lucide="phone"></i> Dial 0 from your room</span>
+      <span><i data-lucide="shield-check"></i> Demo · no real request is sent</span>
+    </div>
+  </div>
+</section>
+
+<section class="guest-services-page">
+  <div class="container">
+    <div class="gs-quick-grid">
+      <!-- Express check-in -->
+      <div class="gs-quick">
+        <span class="gs-icon"><i data-lucide="log-in"></i></span>
+        <span class="eyebrow light">Arrival</span>
+        <h2>Express check-in</h2>
+        <p>Tell us you have arrived and we will have your key ready at the desk. Your reservation is looked up securely by reference.</p>
+        <form class="gs-form-inline" data-ajax-guest-service data-mode="checkin" novalidate>
+          <input type="hidden" name="service" value="Express check-in">
+          <input type="hidden" name="roomNumber" value="Pre-arrival">
+          <div class="field">
+            <label for="checkinReference">Booking reference</label>
+            <input type="text" id="checkinReference" name="bookingReference" placeholder="GA-XXXXXX" required autocomplete="off">
+            <span class="field-error"></span>
+          </div>
+          <div class="field">
+            <label for="checkinName">Surname</label>
+            <input type="text" id="checkinName" name="name" placeholder="As on the reservation" required autocomplete="family-name">
+            <span class="field-error"></span>
+          </div>
+          <button type="submit" class="btn btn-gold">Begin Check-In <i data-lucide="arrow-right"></i></button>
+          <p class="form-status" data-status aria-live="polite"></p>
+        </form>
+      </div>
+
+      <!-- Express check-out -->
+      <div class="gs-quick checkout">
+        <span class="gs-icon"><i data-lucide="log-out"></i></span>
+        <span class="eyebrow">Departure</span>
+        <h2>Express check-out</h2>
+        <p>Ready to leave? Send your room number and we will prepare the folio. A printed copy can be collected from reception.</p>
+        <form class="gs-form-inline" data-ajax-guest-service data-mode="checkout" novalidate>
+          <input type="hidden" name="service" value="Express check-out">
+          <div class="field">
+            <label for="checkoutReference">Booking reference</label>
+            <input type="text" id="checkoutReference" name="bookingReference" placeholder="GA-XXXXXX" required autocomplete="off">
+            <span class="field-error"></span>
+          </div>
+          <div class="field">
+            <label for="checkoutRoom">Room number</label>
+            <input type="text" id="checkoutRoom" name="roomNumber" placeholder="e.g. 304" required>
+            <span class="field-error"></span>
+          </div>
+          <div class="field">
+            <label for="checkoutName">Surname</label>
+            <input type="text" id="checkoutName" name="name" placeholder="As on the reservation" required autocomplete="family-name">
+            <span class="field-error"></span>
+          </div>
+          <button type="submit" class="btn btn-outline">Request Check-Out <i data-lucide="arrow-right"></i></button>
+          <p class="form-status" data-status aria-live="polite"></p>
+        </form>
+      </div>
+    </div>
+
+    <div class="gs-services-head">
+      <span class="eyebrow">During your stay</span>
+      <h2>However we can <em>help.</em></h2>
+    </div>
+    <div class="gs-services-grid">
+      <% services.forEach(function(service) { %>
+        <article class="gs-service-card">
+          <span class="gs-service-icon"><i data-lucide="<%= service.icon %>"></i></span>
+          <h3><%= service.title %></h3>
+          <p><%= service.description %></p>
+          <button type="button" class="exp-enquire"
+                  data-service-request
+                  data-service="<%= service.title %>">
+            Request this <i data-lucide="arrow-up-right"></i>
+          </button>
+        </article>
+      <% }); %>
+    </div>
+
+    <div class="gs-note">
+      <i data-lucide="info"></i>
+      <p>
+        <strong>This is a demonstration.</strong> Requests are stored in the demo database and
+        appear in the hotel’s admin dashboard, but no member of staff will act on them.
+        For a real stay, dial <strong>0</strong> from your room, call
+        <a href="tel:<%= settings.phone.replace(/[^+\d]/g, '') %>" style="border-bottom:1px solid rgba(20,33,43,.3);"><%= settings.phone %></a>
+        or message us on
+        <a href="https://wa.me/<%= settings.whatsapp_digits %>?text=<%= encodeURIComponent('Hello Grand Aurelia, I am a guest and would like to make a request.') %>" target="_blank" rel="noopener" style="border-bottom:1px solid rgba(20,33,43,.3);">WhatsApp</a>.
+      </p>
+    </div>
+
+    <div class="menu-footnote" style="margin-top:40px;">
+      <p>
+        <strong style="color:var(--navy);font-weight:600;">Not staying with us yet?</strong>
+        Browse the rooms and suites, or speak with reservations about arrival times, accessibility
+        and anything that would make your stay easier.
+      </p>
+      <div class="flex wrap gap-3">
+        <a class="btn btn-outline" href="/rooms">Rooms &amp; Suites</a>
+        <a class="btn btn-gold" href="/contact">Contact Us <i data-lucide="arrow-up-right"></i></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

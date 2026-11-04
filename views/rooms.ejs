@@ -1,0 +1,174 @@
+<%
+  const title = 'Rooms & Suites — Grand Aurelia Hotel & Resort';
+  const metaDescription = 'Explore eleven room categories and forty rooms at Grand Aurelia, from the considered Standard Room to the Presidential Suite.';
+  const qs = (extra = {}) => {
+    const params = new URLSearchParams({
+      checkin: dates.checkIn,
+      checkout: dates.checkOut,
+      adults: String(dates.adults),
+      children: String(dates.children),
+      rooms: String(dates.rooms),
+      ...Object.fromEntries(Object.entries(extra).filter(([, v]) => v !== '' && v !== 0 && v !== '0'))
+    });
+    return '?' + params.toString();
+  };
+%>
+<%- include('partials/head') %>
+
+<section class="page-hero">
+  <div class="page-hero-image">
+    <img src="/images/room-05.jpg" alt="A Deluxe Room at Grand Aurelia with Margalla Hills views">
+  </div>
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a><span>/</span><span>Rooms &amp; Suites</span>
+    </nav>
+    <h1>Rooms &amp; <em>Suites</em></h1>
+    <p class="hero-sub">
+      Eleven categories, forty rooms, and one consistent idea: that a hotel room should feel
+      like the calmest version of home.
+    </p>
+    <div class="page-hero-meta">
+      <span><i data-lucide="building-2"></i> 40 rooms &amp; suites</span>
+      <span><i data-lucide="maximize"></i> From 32 to 240 m²</span>
+      <span><i data-lucide="mountain"></i> Hills &amp; city views</span>
+    </div>
+  </div>
+</section>
+
+<!-- Stay search -->
+<div class="search-band">
+  <div class="container">
+    <div class="stay-search">
+      <form action="/rooms" method="get" aria-label="Search available rooms">
+        <div class="stay-field">
+          <label for="roomsCheckin">Arrival</label>
+          <input type="date" id="roomsCheckin" name="checkin" value="<%= dates.checkIn %>" min="<%= dates.checkIn %>" required>
+        </div>
+        <div class="stay-field">
+          <label for="roomsCheckout">Departure</label>
+          <input type="date" id="roomsCheckout" name="checkout" value="<%= dates.checkOut %>" min="<%= dates.checkOut %>" required>
+        </div>
+        <div class="stay-field">
+          <label for="roomsAdults">Adults</label>
+          <select id="roomsAdults" name="adults">
+            <% for (let i = 1; i <= 6; i++) { %><option value="<%= i %>" <%= dates.adults === i ? 'selected' : '' %>><%= i %></option><% } %>
+          </select>
+        </div>
+        <div class="stay-field">
+          <label for="roomsChildren">Children</label>
+          <select id="roomsChildren" name="children">
+            <% for (let i = 0; i <= 4; i++) { %><option value="<%= i %>" <%= dates.children === i ? 'selected' : '' %>><%= i %></option><% } %>
+          </select>
+        </div>
+        <div class="stay-field">
+          <label for="roomsCount">Rooms</label>
+          <select id="roomsCount" name="rooms">
+            <% for (let i = 1; i <= 4; i++) { %><option value="<%= i %>" <%= dates.rooms === i ? 'selected' : '' %>><%= i %></option><% } %>
+          </select>
+        </div>
+        <div class="stay-submit">
+          <button type="submit" class="btn btn-gold">Update Search</button>
+        </div>
+      </form>
+    </div>
+    <div class="search-note">
+      <span><%= nights %> night<%= nights === 1 ? '' : 's' %> · <%= dateLabel(dates.checkIn) %> – <%= dateLabel(dates.checkOut) %></span>
+      <a href="/booking<%= qs() %>">Prefer to book in one step? <i data-lucide="arrow-up-right"></i></a>
+    </div>
+  </div>
+</div>
+
+<section class="section rooms-page" style="padding-top:64px;">
+  <div class="container">
+    <div class="rooms-intro">
+      <div>
+        <span class="eyebrow">The collection</span>
+        <h2 class="section-heading">Find your <em>room.</em></h2>
+      </div>
+      <p>
+        Rates include access to the infinity pool, fitness centre, gardens and 24-hour concierge.
+        Breakfast, transfers and spa rituals can be added when you reserve.
+      </p>
+    </div>
+
+    <div class="rooms-toolbar">
+      <div class="filter-chips" role="group" aria-label="Filter by room category">
+        <a class="filter-chip <%= !filters.category ? 'is-active' : '' %>" href="/rooms<%= qs({ sort: filters.sort === 'recommended' ? '' : filters.sort, view: filters.view }) %>">All Rooms</a>
+        <% categories.forEach(function(cat) { %>
+          <a class="filter-chip <%= filters.category === cat.slug ? 'is-active' : '' %>" href="/rooms<%= qs({ category: cat.slug, sort: filters.sort === 'recommended' ? '' : filters.sort, view: filters.view }) %>"><%= cat.name %></a>
+        <% }); %>
+      </div>
+      <div class="rooms-toolbar-right">
+        <label for="sortRooms">Sort</label>
+        <form action="/rooms" method="get" id="sortForm">
+          <input type="hidden" name="checkin" value="<%= dates.checkIn %>">
+          <input type="hidden" name="checkout" value="<%= dates.checkOut %>">
+          <input type="hidden" name="adults" value="<%= dates.adults %>">
+          <input type="hidden" name="children" value="<%= dates.children %>">
+          <input type="hidden" name="rooms" value="<%= dates.rooms %>">
+          <% if (filters.category) { %><input type="hidden" name="category" value="<%= filters.category %>"><% } %>
+          <% if (filters.view) { %><input type="hidden" name="view" value="<%= filters.view %>"><% } %>
+          <select name="sort" id="sortRooms" class="toolbar-select" data-auto-submit>
+            <option value="recommended" <%= filters.sort === 'recommended' ? 'selected' : '' %>>Recommended</option>
+            <option value="price-asc" <%= filters.sort === 'price-asc' ? 'selected' : '' %>>Price: low to high</option>
+            <option value="price-desc" <%= filters.sort === 'price-desc' ? 'selected' : '' %>>Price: high to low</option>
+            <option value="size" <%= filters.sort === 'size' ? 'selected' : '' %>>Largest first</option>
+          </select>
+        </form>
+      </div>
+    </div>
+
+    <div class="rooms-result-meta">
+      <strong><%= rooms.length %></strong> categor<%= rooms.length === 1 ? 'y' : 'ies' %> available
+      <span>·</span>
+      <%= nights %> night<%= nights === 1 ? '' : 's' %>
+      <% if (filters.category) { %><span>·</span> filtered by <strong><%= filters.category.replace(/-/g, ' ') %></strong><% } %>
+    </div>
+
+    <div class="rooms-grid">
+      <% if (!rooms.length) { %>
+        <div class="rooms-empty">
+          <h3>No rooms match those filters</h3>
+          <p>Try widening your dates or removing a filter. Our reservations team can also arrange connecting rooms and special configurations.</p>
+          <a class="btn btn-outline" href="/rooms">Clear all filters</a>
+        </div>
+      <% } %>
+      <% rooms.forEach(function(room) { %>
+        <article class="room-card" data-reveal="fade-up">
+          <a class="room-card-media" href="/rooms/<%= room.slug %><%= qs() %>" aria-label="View <%= room.name %>">
+            <img src="<%= room.cover_image %>" alt="<%= room.name %>" loading="lazy">
+            <span class="room-badge <%= room.availableRooms === 0 ? 'soldout' : room.availableRooms <= 2 ? 'limited' : '' %>">
+              <span class="dot"></span>
+              <%= room.availableRooms === 0 ? 'Fully booked' : room.availableRooms <= 2 ? 'Only ' + room.availableRooms + ' left' : room.availableRooms + ' available' %>
+            </span>
+            <span class="room-card-arrow"><i data-lucide="arrow-up-right"></i></span>
+          </a>
+          <div class="room-card-body">
+            <div class="room-card-kicker">
+              <span><%= room.view %></span>
+              <span><%= room.size_sqm %> m²</span>
+            </div>
+            <h3><a href="/rooms/<%= room.slug %><%= qs() %>"><%= room.name %></a></h3>
+            <p class="room-card-desc"><%= room.description %></p>
+            <div class="room-card-specs">
+              <span><i data-lucide="bed-double"></i> <%= room.bed_type %></span>
+              <span><i data-lucide="users"></i> <%= room.max_adults %> adults<%= room.max_children ? ' · ' + room.max_children + ' children' : '' %></span>
+            </div>
+            <div class="room-card-foot">
+              <div class="room-price"><%= money(room.price) %><small>per night · excl. taxes</small></div>
+              <a class="room-card-link" href="/booking<%= qs({ room: room.slug }) %>">Reserve <i data-lucide="arrow-up-right"></i></a>
+            </div>
+          </div>
+        </article>
+      <% }); %>
+    </div>
+
+    <div class="rooms-note">
+      <p>Staying longer than a week, or travelling with a group? We have quiet ways to make that easier.</p>
+      <a href="https://wa.me/<%= settings.whatsapp_digits %>?text=<%= encodeURIComponent('Hello Grand Aurelia, I would like to ask about a longer stay or group booking.') %>" target="_blank" rel="noopener" class="btn btn-outline">Speak with Reservations <i data-lucide="message-circle"></i></a>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

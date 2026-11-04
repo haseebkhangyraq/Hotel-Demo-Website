@@ -1,0 +1,112 @@
+<%
+  const isEdit = Boolean(offer);
+  const action = isEdit ? '/admin/offers/' + offer.id : '/admin/offers';
+  const v = function(key, fallback) { return offer && offer[key] !== null && offer[key] !== undefined ? offer[key] : (fallback === undefined ? '' : fallback); };
+%>
+<%- include('partials/head') %>
+
+<div class="admin-breadcrumb">
+  <a href="/admin/offers"><i data-lucide="arrow-left"></i> All offers</a>
+</div>
+
+<div class="admin-page-head">
+  <div>
+    <span class="admin-eyebrow"><%= isEdit ? 'Edit offer' : 'New offer' %></span>
+    <h1><%= isEdit ? offer.title : 'Craft an invitation' %></h1>
+    <p>Offers appear on the website when marked live. Promotional codes can be applied at checkout.</p>
+  </div>
+</div>
+
+<div class="admin-detail-grid">
+  <div class="admin-detail-main">
+    <section class="panel">
+      <div class="panel-head"><div><span class="panel-eyebrow">Content</span><h2 class="panel-title">Offer details</h2></div></div>
+      <div class="panel-body">
+        <form action="<%= action %>" method="post" class="admin-form-grid">
+          <div class="admin-field span-2">
+            <label class="admin-label" for="offerTitle">Title</label>
+            <input class="admin-input" id="offerTitle" name="title" value="<%= v('title') %>" placeholder="The Weekend Escape" required>
+          </div>
+          <% if (!isEdit) { %>
+            <div class="admin-field span-2">
+              <label class="admin-label" for="offerSlug">URL slug</label>
+              <input class="admin-input" id="offerSlug" name="slug" value="<%= v('slug') %>" placeholder="weekend-escape">
+              <span class="admin-help">Leave blank to generate from the title.</span>
+            </div>
+          <% } %>
+          <div class="admin-field span-2">
+            <label class="admin-label" for="offerSubtitle">Subtitle</label>
+            <input class="admin-input" id="offerSubtitle" name="subtitle" value="<%= v('subtitle') %>" placeholder="Two nights, breakfast and a late check-out">
+          </div>
+          <div class="admin-field span-2">
+            <label class="admin-label" for="offerDescription">Description</label>
+            <textarea class="admin-input" id="offerDescription" name="description" rows="4" placeholder="Describe the invitation in a sentence or two."><%= v('description') %></textarea>
+          </div>
+          <div class="admin-field">
+            <label class="admin-label" for="offerDiscountLabel">Discount label</label>
+            <input class="admin-input" id="offerDiscountLabel" name="discount_label" value="<%= v('discount_label') %>" placeholder="Save 15%">
+          </div>
+          <div class="admin-field">
+            <label class="admin-label" for="offerDiscountPercent">Discount percent</label>
+            <input class="admin-input" id="offerDiscountPercent" name="discount_percent" type="number" min="0" max="100" value="<%= v('discount_percent', 0) %>">
+          </div>
+          <div class="admin-field">
+            <label class="admin-label" for="offerPromo">Promotional code</label>
+            <input class="admin-input" id="offerPromo" name="promo_code" value="<%= v('promo_code') %>" placeholder="WEEKEND10" style="text-transform:uppercase;">
+          </div>
+          <div class="admin-field">
+            <label class="admin-label" for="offerImage">Image path</label>
+            <input class="admin-input" id="offerImage" name="image" value="<%= v('image', '/images/exp-weekend.jpg') %>" placeholder="/images/exp-weekend.jpg">
+          </div>
+          <div class="admin-field">
+            <label class="admin-label" for="offerFrom">Valid from</label>
+            <input class="admin-input" id="offerFrom" name="valid_from" type="date" value="<%= v('valid_from') %>">
+          </div>
+          <div class="admin-field">
+            <label class="admin-label" for="offerTo">Valid to</label>
+            <input class="admin-input" id="offerTo" name="valid_to" type="date" value="<%= v('valid_to') %>">
+          </div>
+          <div class="admin-field span-2">
+            <label class="admin-label" for="offerConditions">Conditions</label>
+            <textarea class="admin-input" id="offerConditions" name="conditions" rows="3" placeholder="Subject to availability. Minimum two-night stay."><%= v('conditions') %></textarea>
+          </div>
+          <div class="admin-field">
+            <label class="admin-label" for="offerSort">Sort order</label>
+            <input class="admin-input" id="offerSort" name="sort_order" type="number" value="<%= v('sort_order', 0) %>">
+          </div>
+          <div class="admin-checkbox-group">
+            <label class="admin-checkbox">
+              <input type="checkbox" name="featured" value="1" <%= !isEdit || offer.featured ? 'checked' : '' %>>
+              <span>Feature on homepage</span>
+            </label>
+            <label class="admin-checkbox">
+              <input type="checkbox" name="active" value="1" <%= !isEdit || offer.active ? 'checked' : '' %>>
+              <span>Live on website</span>
+            </label>
+          </div>
+          <div class="admin-form-actions span-2">
+            <button class="admin-btn admin-btn-gold" type="submit"><i data-lucide="save"></i> <%= isEdit ? 'Save offer' : 'Create offer' %></button>
+            <a class="admin-btn admin-btn-ghost" href="/admin/offers">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </section>
+  </div>
+
+  <aside class="admin-detail-side">
+    <section class="panel">
+      <div class="panel-head"><div><span class="panel-eyebrow">Preview</span><h2 class="panel-title">Visual</h2></div></div>
+      <div class="panel-body">
+        <div class="offer-preview">
+          <img src="<%= v('image', '/images/exp-weekend.jpg') %>" alt="Offer image preview">
+          <span class="offer-preview-code"><%= v('promo_code') || 'PROMO' %></span>
+          <strong><%= v('title') || 'Your offer title' %></strong>
+          <p><%= v('subtitle') || 'A short, evocative subtitle.' %></p>
+        </div>
+        <p class="admin-help">Images are served from <code>/public/images</code>. Use a path such as <code>/images/exp-weekend.jpg</code>.</p>
+      </div>
+    </section>
+  </aside>
+</div>
+
+<%- include('partials/foot') %>

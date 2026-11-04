@@ -1,0 +1,74 @@
+<%- include('partials/head') %>
+
+<div class="admin-page-head">
+  <div>
+    <span class="admin-eyebrow">The hotel</span>
+    <h1>Facilities</h1>
+    <p>The spaces and services that shape a stay. Edit descriptions, hours and visibility.</p>
+  </div>
+  <div class="admin-actions">
+    <a class="admin-btn admin-btn-ghost" href="/facilities" target="_blank" rel="noopener"><i data-lucide="external-link"></i> View public page</a>
+  </div>
+</div>
+
+<div class="facility-admin-list">
+  <% facilities.forEach(function(facility, index) { %>
+    <details class="panel admin-accordion" <%= index === 0 ? 'open' : '' %>>
+      <summary>
+        <div class="accordion-identity">
+          <span class="facility-num"><%= String(index + 1).padStart(2, '0') %></span>
+          <div>
+            <strong><%= facility.name %></strong>
+            <em><%= facility.category %> · <%= facility.hours || 'Hours on request' %></em>
+          </div>
+        </div>
+        <div class="accordion-meta">
+          <span class="badge <%= facility.active ? 'active' : 'inactive' %>"><%= facility.active ? 'Live' : 'Hidden' %></span>
+          <i data-lucide="chevron-down"></i>
+        </div>
+      </summary>
+      <form action="/admin/facilities/<%= facility.id %>" method="post" class="panel-body admin-form-grid">
+        <div class="admin-field">
+          <label class="admin-label" for="facName<%= facility.id %>">Name</label>
+          <input class="admin-input" id="facName<%= facility.id %>" name="name" value="<%= facility.name %>" required>
+        </div>
+        <div class="admin-field">
+          <label class="admin-label" for="facCategory<%= facility.id %>">Category</label>
+          <input class="admin-input" id="facCategory<%= facility.id %>" name="category" value="<%= facility.category %>">
+        </div>
+        <div class="admin-field">
+          <label class="admin-label" for="facHours<%= facility.id %>">Hours</label>
+          <input class="admin-input" id="facHours<%= facility.id %>" name="hours" value="<%= facility.hours || '' %>" placeholder="Daily · 06:00 – 22:00">
+        </div>
+        <div class="admin-field">
+          <label class="admin-label">Slug</label>
+          <input class="admin-input" value="<%= facility.slug %>" disabled>
+        </div>
+        <div class="admin-field span-2">
+          <label class="admin-label" for="facShort<%= facility.id %>">Short description</label>
+          <input class="admin-input" id="facShort<%= facility.id %>" name="short_description" value="<%= facility.short_description %>">
+        </div>
+        <div class="admin-field span-2">
+          <label class="admin-label" for="facDescription<%= facility.id %>">Full description</label>
+          <textarea class="admin-input" id="facDescription<%= facility.id %>" name="description" rows="4"><%= facility.description %></textarea>
+        </div>
+        <div class="admin-field span-2">
+          <label class="admin-label">Included features</label>
+          <div class="admin-tag-list">
+            <% facility.features.forEach(function(feature) { %><span><%= feature %></span><% }); %>
+          </div>
+          <span class="admin-help">Features are managed in the seed data for this demonstration.</span>
+        </div>
+        <label class="admin-checkbox span-2">
+          <input type="checkbox" name="active" value="1" <%= facility.active ? 'checked' : '' %>>
+          <span>Show this facility on the website</span>
+        </label>
+        <div class="admin-form-actions span-2">
+          <button class="admin-btn admin-btn-gold" type="submit"><i data-lucide="save"></i> Save facility</button>
+        </div>
+      </form>
+    </details>
+  <% }); %>
+</div>
+
+<%- include('partials/foot') %>

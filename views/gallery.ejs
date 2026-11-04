@@ -1,0 +1,73 @@
+<%
+  const title = 'Gallery — Grand Aurelia Hotel & Resort';
+  const metaDescription = 'A visual journey through Grand Aurelia: rooms, suites, dining, spa, pool, gardens, weddings and event spaces.';
+%>
+<%- include('partials/head') %>
+
+<section class="page-hero">
+  <div class="page-hero-image">
+    <img src="/images/resort-03.jpg" alt="The Grand Aurelia lobby in the late afternoon light">
+  </div>
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a><span>/</span><span>Gallery</span>
+    </nav>
+    <h1>The hotel, <em>in fragments.</em></h1>
+    <p class="hero-sub">
+      Light across the lobby at four o’clock. The pool before anyone arrives. Small details
+      that make a stay feel like yours.
+    </p>
+    <div class="page-hero-meta">
+      <span><i data-lucide="images"></i> <%= gallery.length %> photographs</span>
+      <span><i data-lucide="maximize-2"></i> Open any image full screen</span>
+    </div>
+  </div>
+</section>
+
+<section class="gallery-page">
+  <div class="container">
+    <div class="gallery-filters" role="group" aria-label="Filter gallery">
+      <button type="button" class="filter-chip is-active" data-gallery-filter="all">All Photographs</button>
+      <% categories.forEach(function(cat) { %>
+        <button type="button" class="filter-chip" data-gallery-filter="<%= cat %>"><%= cat %></button>
+      <% }); %>
+    </div>
+
+    <p class="gallery-page-count"><strong id="galleryCount"><%= gallery.length %></strong> photographs · <span id="galleryCategoryLabel">the full collection</span></p>
+
+    <div class="gallery-masonry" id="galleryGrid">
+      <% gallery.forEach(function(item, index) { %>
+        <button type="button" class="gallery-tile"
+                data-lightbox-group="gallery"
+                data-full="<%= item.image %>"
+                data-caption="<%= item.title %>"
+                data-category="<%= item.category %>"
+                data-gallery-item
+                aria-label="View <%= item.title %>">
+          <img src="<%= item.image %>" alt="<%= item.title %>" loading="<%= index < 6 ? 'eager' : 'lazy' %>">
+          <span class="gallery-tile-caption">
+            <span><%= item.category %></span>
+            <strong><%= item.title %></strong>
+          </span>
+        </button>
+      <% }); %>
+    </div>
+
+    <div class="menu-empty" id="galleryEmpty" hidden>
+      <h3>No photographs in this collection</h3>
+      <p>Choose another category to continue through the gallery.</p>
+      <button type="button" class="btn btn-outline mt-3" data-gallery-reset>Show all photographs</button>
+    </div>
+
+    <div class="menu-footnote" style="margin-top:56px;">
+      <p>
+        <strong style="color:var(--navy);font-weight:600;">A note on these images.</strong>
+        Grand Aurelia is a fictional hotel created for demonstration. Photography is sourced
+        from Unsplash and used here to illustrate the design and experience.
+      </p>
+      <a class="btn btn-outline" href="/booking">Reserve Your Stay <i data-lucide="arrow-up-right"></i></a>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

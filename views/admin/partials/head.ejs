@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#14212B">
+  <title><%= typeof title !== 'undefined' ? title : 'Admin' %> · Grand Aurelia Admin</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%2314212B'/%3E%3Cpath d='M32 12 46 50H38L32 31 26 50H18L32 12Z' fill='%23C5A46D'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css?v=1.1">
+  <link rel="stylesheet" href="/css/admin.css?v=1.1">
+</head>
+<body class="admin-body <%= typeof bodyClass !== 'undefined' ? bodyClass : '' %>" data-admin-page="<%= typeof page !== 'undefined' ? page : '' %>">
+
+<aside class="admin-sidebar" id="adminSidebar" aria-label="Admin navigation">
+  <a href="/admin" class="admin-brand">
+    <svg viewBox="0 0 48 48" aria-hidden="true">
+      <circle cx="24" cy="24" r="22.5" fill="none" stroke="currentColor" stroke-width="0.8"/>
+      <path d="M24 10 34.5 38H28.7L24 23.4 19.3 38H13.5L24 10Z" fill="currentColor"/>
+      <circle cx="24" cy="42.5" r="1.15" fill="currentColor"/>
+    </svg>
+    <span>
+      <strong>GRAND AURELIA</strong>
+      <em>Hotel Management</em>
+    </span>
+  </a>
+
+  <nav class="admin-nav">
+    <span class="admin-nav-label">Overview</span>
+    <a class="<%= page === 'admin-dashboard' ? 'is-active' : '' %>" href="/admin"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+
+    <span class="admin-nav-label">Operations</span>
+    <a class="<%= page === 'admin-bookings' ? 'is-active' : '' %>" href="/admin/bookings"><i data-lucide="calendar-check"></i> Reservations</a>
+    <a class="<%= page === 'admin-rooms' ? 'is-active' : '' %>" href="/admin/rooms"><i data-lucide="bed-double"></i> Rooms</a>
+    <a class="<%= page === 'admin-categories' ? 'is-active' : '' %>" href="/admin/categories"><i data-lucide="layers"></i> Room Categories</a>
+    <a class="<%= page === 'admin-guests' ? 'is-active' : '' %>" href="/admin/guests"><i data-lucide="users"></i> Guests</a>
+
+    <span class="admin-nav-label">Hotel</span>
+    <a class="<%= page === 'admin-offers' ? 'is-active' : '' %>" href="/admin/offers"><i data-lucide="ticket"></i> Offers</a>
+    <a class="<%= page === 'admin-facilities' ? 'is-active' : '' %>" href="/admin/facilities"><i data-lucide="building-2"></i> Facilities</a>
+    <a class="<%= page === 'admin-dining' ? 'is-active' : '' %>" href="/admin/dining"><i data-lucide="utensils"></i> Dining Menu</a>
+
+    <span class="admin-nav-label">Inbox</span>
+    <a class="<%= page === 'admin-enquiries' ? 'is-active' : '' %>" href="/admin/enquiries"><i data-lucide="inbox"></i> Enquiries &amp; Requests</a>
+    <a class="<%= page === 'admin-messages' ? 'is-active' : '' %>" href="/admin/messages"><i data-lucide="mail"></i> Contact Messages</a>
+
+    <span class="admin-nav-label">System</span>
+    <a class="<%= page === 'admin-settings' ? 'is-active' : '' %>" href="/admin/settings"><i data-lucide="settings"></i> Settings</a>
+  </nav>
+
+  <div class="admin-sidebar-foot">
+    <a href="/" target="_blank" rel="noopener"><i data-lucide="external-link"></i> View website</a>
+    <p>Demo environment<br><span>Data is stored locally in SQLite.</span></p>
+  </div>
+</aside>
+
+<div class="admin-shell">
+  <header class="admin-topbar">
+    <button type="button" class="admin-menu-toggle" id="adminMenuToggle" aria-label="Open admin menu" aria-expanded="false" aria-controls="adminSidebar">
+      <i data-lucide="menu"></i>
+    </button>
+    <div class="admin-topbar-title">
+      <span>Grand Aurelia</span>
+      <strong><%= typeof title !== 'undefined' ? title : 'Admin' %></strong>
+    </div>
+    <div class="admin-topbar-actions">
+      <a class="admin-topbar-link" href="/" target="_blank" rel="noopener"><i data-lucide="external-link"></i> Website</a>
+      <div class="admin-user">
+        <span class="admin-avatar"><%= (admin && admin.name ? admin.name : 'A').charAt(0).toUpperCase() %></span>
+        <span class="admin-user-meta">
+          <strong><%= admin && admin.name ? admin.name : 'Administrator' %></strong>
+          <em>Front Office Manager</em>
+        </span>
+      </div>
+      <form action="/admin/logout" method="post" class="admin-logout">
+        <button type="submit" aria-label="Sign out"><i data-lucide="log-out"></i><span>Sign out</span></button>
+      </form>
+    </div>
+  </header>
+
+  <main class="admin-main">
+    <% if (typeof flash !== 'undefined' && flash) { %>
+      <div class="admin-flash <%= flash.type %>" role="status">
+        <i data-lucide="<%= flash.type === 'error' ? 'alert-circle' : 'check-circle' %>"></i>
+        <span><%= flash.message %></span>
+        <button type="button" class="admin-flash-close" data-dismiss-flash aria-label="Dismiss"><i data-lucide="x"></i></button>
+      </div>
+    <% } %>

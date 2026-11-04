@@ -1,0 +1,116 @@
+<%
+  const title = 'Offers & Packages — Grand Aurelia Hotel & Resort';
+  const metaDescription = 'Considered offers and packages at Grand Aurelia: weekend escapes, honeymoons, family stays, extended stays and suite privileges.';
+  const featuredOffers = offers.filter(function(o) { return o.featured; }).slice(0, 3);
+  const moreOffers = offers.filter(function(o) { return !featuredOffers.includes(o); });
+%>
+<%- include('partials/head') %>
+
+<section class="page-hero">
+  <div class="page-hero-image">
+    <img src="/images/exp-weekend.jpg" alt="A poolside cabana at Grand Aurelia at sunset">
+  </div>
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a><span>/</span><span>Offers &amp; Packages</span>
+    </nav>
+    <h1>A little more <em>Aurelia.</em></h1>
+    <p class="hero-sub">
+      Considered packages for weekends, honeymoons and long, unhurried stays. Each one is
+      limited, and each one is quietly generous.
+    </p>
+    <div class="page-hero-meta">
+      <span><i data-lucide="ticket"></i> <%= offers.length %> current offers</span>
+      <span><i data-lucide="shield-check"></i> Best rate when you book direct</span>
+      <span><i data-lucide="sparkles"></i> Promotional codes applied at checkout</span>
+    </div>
+  </div>
+</section>
+
+<section class="offers-page">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <span class="eyebrow">Private invitations</span>
+        <h2 class="section-heading">Stay a little <em>longer.</em></h2>
+      </div>
+      <div class="section-aside">
+        <p>
+          Use the promotional code when you reserve, or mention the offer to our reservations
+          team. Offers are subject to availability and cannot always be combined.
+        </p>
+      </div>
+    </div>
+
+    <% featuredOffers.forEach(function(offer, index) { %>
+      <article class="offer-feature" data-reveal="fade-up">
+        <div class="offer-feature-image">
+          <img src="<%= offer.image %>" alt="<%= offer.title %>" loading="lazy">
+        </div>
+        <div class="offer-feature-copy">
+          <span class="eyebrow"><%= offer.subtitle %></span>
+          <h2><%= offer.title %></h2>
+          <p class="offer-sub"><%= offer.discount_label %></p>
+          <p><%= offer.description %></p>
+          <% if (offer.promo_code) { %>
+            <span class="offer-code">
+              <i data-lucide="ticket" class="icon-xs"></i> <%= offer.promo_code %>
+              <button type="button" class="offer-copy" data-copy="<%= offer.promo_code %>" aria-label="Copy code <%= offer.promo_code %>"><i data-lucide="copy" class="icon-xs"></i></button>
+            </span>
+          <% } %>
+          <% if (offer.conditions) { %>
+            <p class="offer-conditions"><%= offer.conditions %></p>
+          <% } %>
+          <% if (offer.valid_to) { %>
+            <span class="offer-validity"><i data-lucide="calendar"></i> Valid until <%= dateLabel(offer.valid_to) %></span>
+          <% } %>
+          <a class="btn btn-gold" href="/booking<%= offer.promo_code ? '?promo=' + encodeURIComponent(offer.promo_code) : '' %>">Reserve This Offer <i data-lucide="arrow-up-right"></i></a>
+        </div>
+      </article>
+    <% }); %>
+
+    <% if (moreOffers.length) { %>
+      <div class="section-header" style="margin-top:70px;margin-bottom:0;">
+        <div>
+          <span class="eyebrow">More ways to stay</span>
+          <h2 class="section-heading" style="font-size:clamp(34px,4vw,50px);">Quietly <em>generous.</em></h2>
+        </div>
+      </div>
+      <div class="offers-grid-page">
+        <% moreOffers.forEach(function(offer) { %>
+          <article class="offer-card" data-reveal="fade-up">
+            <div class="offer-media">
+              <img src="<%= offer.image %>" alt="<%= offer.title %>" loading="lazy">
+              <span class="offer-discount"><%= offer.discount_label %></span>
+            </div>
+            <div class="offer-body">
+              <span class="eyebrow"><%= offer.subtitle %></span>
+              <h3><%= offer.title %></h3>
+              <p><%= offer.description %></p>
+              <% if (offer.conditions) { %><p class="offer-conditions"><%= offer.conditions %></p><% } %>
+              <% if (offer.promo_code) { %>
+                <span class="offer-code">
+                  <i data-lucide="ticket" class="icon-xs"></i> <%= offer.promo_code %>
+                  <button type="button" class="offer-copy" data-copy="<%= offer.promo_code %>" aria-label="Copy code <%= offer.promo_code %>"><i data-lucide="copy" class="icon-xs"></i></button>
+                </span>
+              <% } %>
+              <a class="text-link" href="/booking<%= offer.promo_code ? '?promo=' + encodeURIComponent(offer.promo_code) : '' %>">Reserve this offer <i data-lucide="arrow-up-right" class="icon-xs"></i></a>
+            </div>
+          </article>
+        <% }); %>
+      </div>
+    <% } %>
+
+    <div class="menu-footnote" style="margin-top:56px;">
+      <p>
+        <strong style="color:var(--navy);font-weight:600;">A note on our offers.</strong>
+        Promotional codes are applied to the room portion of your reservation and validated at
+        checkout. Offers are subject to availability, may not be combined, and are exclusive of
+        taxes and service charge unless stated.
+      </p>
+      <a class="btn btn-outline" href="/contact">Ask Reservations <i data-lucide="arrow-up-right"></i></a>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

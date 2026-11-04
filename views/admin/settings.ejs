@@ -1,0 +1,177 @@
+<%- include('partials/head') %>
+
+<div class="admin-page-head">
+  <div>
+    <span class="admin-eyebrow">System</span>
+    <h1>Settings</h1>
+    <p>Hotel details, contact information and the commercial rules that power the booking engine.</p>
+  </div>
+  <div class="admin-actions">
+    <a class="admin-btn admin-btn-ghost" href="/" target="_blank" rel="noopener"><i data-lucide="external-link"></i> View website</a>
+  </div>
+</div>
+
+<form action="/admin/settings" method="post" class="settings-form">
+  <div class="settings-grid">
+    <section class="panel">
+      <div class="panel-head"><div><span class="panel-eyebrow">Identity</span><h2 class="panel-title">The hotel</h2></div></div>
+      <div class="panel-body admin-form-grid">
+        <div class="admin-field span-2">
+          <label class="admin-label" for="hotelName">Hotel name</label>
+          <input class="admin-input" id="hotelName" name="hotel_name" value="<%= settings.hotel_name %>">
+        </div>
+        <div class="admin-field">
+          <label class="admin-label" for="shortName">Short name</label>
+          <input class="admin-input" id="shortName" name="short_name" value="<%= settings.short_name %>">
+        </div>
+        <div class="admin-field">
+          <label class="admin-label" for="starRating">Star rating</label>
+          <input class="admin-input" id="starRating" name="star_rating" type="number" min="1" max="7" value="<%= settings.star_rating %>">
+        </div>
+        <div class="admin-field span-2">
+          <label class="admin-label" for="tagline">Tagline</label>
+          <input class="admin-input" id="tagline" name="tagline" value="<%= settings.tagline %>">
+        </div>
+        <div class="admin-field">
+          <label class="admin-label" for="established">Established</label>
+          <input class="admin-input" id="established" name="established" value="<%= settings.established %>">
+        </div>
+        <div class="admin-field">
+          <label class="admin-label" for="currency">Currency</label>
+          <input class="admin-input" id="currency" name="currency" value="<%= settings.currency %>" maxlength="6">
+        </div>
+        <div class="admin-field span-2">
+          <label class="admin-label" for="footerNote">Footer note</label>
+          <textarea class="admin-input" id="footerNote" name="footer_note" rows="2"><%= settings.footer_note %></textarea>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head"><div><span class="panel-eyebrow">Contact</span><h2 class="panel-title">How guests reach us</h2></div></div>
+      <div class="panel-body admin-form-grid">
+        <div class="admin-field">
+          <label class="admin-label" for="phone">Telephone</label>
+          <input class="admin-input" id="phone" name="phone" value="<%= settings.phone %>">
+        </div>
+        <div class="admin-field">
+          <label class="admin-label" for="whatsapp">WhatsApp display</label>
+          <input class="admin-input" id="whatsapp" name="whatsapp" value="<%= settings.whatsapp %>">
+        </div>
+        <div class="admin-field">
+          <label class="admin-label" for="whatsappDigits">WhatsApp digits</label>
+          <input class="admin-input" id="whatsappDigits" name="whatsapp_digits" value="<%= settings.whatsapp_digits %>">
+          <span class="admin-help">Digits only, country code first.</span>
+        </div>
+        <div class="admin-field">
+          <label class="admin-label" for="email">Email</label>
+          <input class="admin-input" id="email" name="email" type="email" value="<%= settings.email %>">
+        </div>
+        <div class="admin-field span-2">
+          <label class="admin-label" for="address">Address</label>
+          <input class="admin-input" id="address" name="address" value="<%= settings.address %>">
+        </div>
+        <div class="admin-field">
+          <label class="admin-label" for="city">City</label>
+          <input class="admin-input" id="city" name="city" value="<%= settings.city %>">
+        </div>
+        <div class="admin-field">
+          <label class="admin-label" for="country">Country</label>
+          <input class="admin-input" id="country" name="country" value="<%= settings.country %>">
+        </div>
+        <div class="admin-field span-2">
+          <label class="admin-label" for="mapsUrl">Maps URL</label>
+          <input class="admin-input" id="mapsUrl" name="maps_url" value="<%= settings.maps_url %>">
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head"><div><span class="panel-eyebrow">Operations</span><h2 class="panel-title">Arrival &amp; departure</h2></div></div>
+      <div class="panel-body admin-form-grid">
+        <div class="admin-field">
+          <label class="admin-label" for="checkinTime">Check-in from</label>
+          <input class="admin-input" id="checkinTime" name="checkin_time" type="time" value="<%= settings.checkin_time %>">
+        </div>
+        <div class="admin-field">
+          <label class="admin-label" for="checkoutTime">Check-out by</label>
+          <input class="admin-input" id="checkoutTime" name="checkout_time" type="time" value="<%= settings.checkout_time %>">
+        </div>
+        <div class="admin-field">
+          <label class="admin-label" for="facebook">Facebook URL</label>
+          <input class="admin-input" id="facebook" name="facebook" value="<%= settings.facebook %>">
+        </div>
+        <div class="admin-field">
+          <label class="admin-label" for="instagram">Instagram URL</label>
+          <input class="admin-input" id="instagram" name="instagram" value="<%= settings.instagram %>">
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head"><div><span class="panel-eyebrow">Commercial</span><h2 class="panel-title">Pricing rules</h2></div></div>
+      <div class="panel-body admin-form-grid">
+        <div class="admin-field">
+          <label class="admin-label" for="serviceRate">Service charge (%)</label>
+          <input class="admin-input" id="serviceRate" name="service_charge_rate" type="number" min="0" max="30" step="0.5" value="<%= settings.service_charge_rate %>">
+        </div>
+        <div class="admin-field">
+          <label class="admin-label" for="taxRate">GST (%)</label>
+          <input class="admin-input" id="taxRate" name="tax_rate" type="number" min="0" max="40" step="0.5" value="<%= settings.tax_rate %>">
+        </div>
+        <div class="admin-field">
+          <label class="admin-label" for="extraAdult">Extra adult / night (PKR)</label>
+          <input class="admin-input" id="extraAdult" name="extra_adult_charge" type="number" min="0" value="<%= settings.extra_adult_charge %>">
+        </div>
+        <div class="admin-field">
+          <label class="admin-label" for="extraChild">Extra child / night (PKR)</label>
+          <input class="admin-input" id="extraChild" name="extra_child_charge" type="number" min="0" value="<%= settings.extra_child_charge %>">
+        </div>
+        <div class="admin-field">
+          <label class="admin-label" for="breakfastPrice">Breakfast / person (PKR)</label>
+          <input class="admin-input" id="breakfastPrice" name="breakfast_price" type="number" min="0" value="<%= settings.breakfast_price %>">
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="settings-save">
+    <p><i data-lucide="info"></i> Rate changes apply to new quotes immediately. Existing reservations keep the rate at which they were booked.</p>
+    <button class="admin-btn admin-btn-gold" type="submit"><i data-lucide="save"></i> Save all settings</button>
+  </div>
+</form>
+
+<div class="settings-grid lower">
+  <section class="panel">
+    <div class="panel-head"><div><span class="panel-eyebrow">Security</span><h2 class="panel-title">Administrator password</h2></div></div>
+    <div class="panel-body">
+      <form action="/admin/settings/password" method="post" class="admin-form-stack">
+        <div class="admin-field">
+          <label class="admin-label" for="currentPassword">Current password</label>
+          <input class="admin-input" id="currentPassword" name="current_password" type="password" autocomplete="current-password" required>
+        </div>
+        <div class="admin-field">
+          <label class="admin-label" for="newPassword">New password</label>
+          <input class="admin-input" id="newPassword" name="new_password" type="password" autocomplete="new-password" minlength="8" required>
+          <span class="admin-help">At least eight characters.</span>
+        </div>
+        <button class="admin-btn admin-btn-ghost" type="submit"><i data-lucide="key-round"></i> Update password</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head"><div><span class="panel-eyebrow">Environment</span><h2 class="panel-title">Demonstration notes</h2></div></div>
+    <div class="panel-body">
+      <div class="detail-list">
+        <div><span>Database</span><strong>SQLite · data/aurelia.db</strong></div>
+        <div><span>Signed in as</span><strong><%= admin.name %></strong></div>
+        <div><span>Admin email</span><strong><%= admin.email || 'admin@grandaurelia.com' %></strong></div>
+        <div><span>Payments</span><strong>Simulated · no real charges</strong></div>
+      </div>
+      <p class="admin-help">To reset all demonstration data, stop the server and run <code>npm run seed</code>. This recreates the database from the seed files.</p>
+    </div>
+  </section>
+</div>
+
+<%- include('partials/foot') %>

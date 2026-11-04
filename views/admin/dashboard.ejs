@@ -1,0 +1,165 @@
+<%- include('partials/head') %>
+
+<div class="admin-page-head">
+  <div>
+    <span class="admin-eyebrow">Overview</span>
+    <h1>Good day, <em><%= admin && admin.name ? admin.name.split(' ')[0] : 'Aurelia' %>.</em></h1>
+    <p>Here is how the hotel looks on <%= dateLabel(stats.today) %>.</p>
+  </div>
+  <div class="admin-actions">
+    <a class="admin-btn admin-btn-ghost" href="/admin/rooms"><i data-lucide="bed-double"></i> Manage rooms</a>
+    <a class="admin-btn admin-btn-gold" href="/booking" target="_blank" rel="noopener"><i data-lucide="plus"></i> New reservation</a>
+  </div>
+</div>
+
+<div class="stat-grid">
+  <article class="stat-card">
+    <div class="stat-top"><span>Total revenue</span><i data-lucide="wallet"></i></div>
+    <strong class="stat-value"><%= money(stats.revenue) %></strong>
+    <p class="stat-meta"><span class="trend up"><i data-lucide="trending-up"></i> Confirmed</span> across all active reservations</p>
+  </article>
+  <article class="stat-card">
+    <div class="stat-top"><span>Reservations</span><i data-lucide="calendar-check"></i></div>
+    <strong class="stat-value"><%= stats.bookings %></strong>
+    <p class="stat-meta"><strong><%= stats.confirmed %></strong> confirmed · <strong><%= stats.pendingBookings %></strong> pending</p>
+  </article>
+  <article class="stat-card">
+    <div class="stat-top"><span>Occupancy</span><i data-lucide="activity"></i></div>
+    <strong class="stat-value"><%= stats.occupancyRate %>%</strong>
+    <p class="stat-meta"><strong><%= stats.occupied %></strong> of <%= stats.rooms %> rooms occupied today</p>
+  </article>
+  <article class="stat-card">
+    <div class="stat-top"><span>Guests</span><i data-lucide="users"></i></div>
+    <strong class="stat-value"><%= stats.guests %></strong>
+    <p class="stat-meta"><strong><%= stats.todayCheckIns %></strong> arrivals · <strong><%= stats.todayCheckOuts %></strong> departures today</p>
+  </article>
+</div>
+
+<div class="dashboard-grid">
+  <section class="panel chart-panel">
+    <div class="panel-head">
+      <div>
+        <span class="panel-eyebrow">Last six months</span>
+        <h2 class="panel-title">Revenue &amp; reservations</h2>
+      </div>
+      <div class="chart-legend">
+        <span><i class="legend-gold"></i> Revenue (PKR ’000)</span>
+        <span><i class="legend-navy"></i> Bookings</span>
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="chart-wrap"><canvas id="revenueChart" aria-label="Revenue and bookings over the last six months" role="img"></canvas></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <span class="panel-eyebrow">Front desk</span>
+        <h2 class="panel-title">Today at a glance</h2>
+      </div>
+      <a class="panel-link" href="/admin/bookings">All <i data-lucide="arrow-up-right"></i></a>
+    </div>
+    <div class="panel-body">
+      <div class="today-group">
+        <h3 class="today-heading"><i data-lucide="log-in"></i> Arrivals <span><%= arrivals.length %></span></h3>
+        <% if (arrivals.length) { %>
+          <div class="today-list">
+            <% arrivals.slice(0, 4).forEach(function(b) { %>
+              <a class="today-item" href="/admin/bookings/<%= b.id %>">
+                <span class="admin-avatar small"><%= b.guest_name.charAt(0) %></span>
+                <span><strong><%= b.guest_name %></strong><em><%= b.category_name %> · <%= b.rooms_count %> room<%= b.rooms_count === 1 ? '' : 's' %></em></span>
+                <span class="today-ref"><%= b.reference %></span>
+              </a>
+            <% }); %>
+          </div>
+        <% } else { %>
+          <p class="today-empty">No arrivals scheduled today.</p>
+        <% } %>
+      </div>
+      <div class="today-group">
+        <h3 class="today-heading"><i data-lucide="log-out"></i> Departures <span><%= departures.length %></span></h3>
+        <% if (departures.length) { %>
+          <div class="today-list">
+            <% departures.slice(0, 4).forEach(function(b) { %>
+              <a class="today-item" href="/admin/bookings/<%= b.id %>">
+                <span class="admin-avatar small"><%= b.guest_name.charAt(0) %></span>
+                <span><strong><%= b.guest_name %></strong><em><%= b.category_name %></em></span>
+                <span class="today-ref"><%= b.reference %></span>
+              </a>
+            <% }); %>
+          </div>
+        <% } else { %>
+          <p class="today-empty">No departures scheduled today.</p>
+        <% } %>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="dashboard-grid lower">
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <span class="panel-eyebrow">Latest activity</span>
+        <h2 class="panel-title">Recent reservations</h2>
+      </div>
+      <a class="panel-link" href="/admin/bookings">View all <i data-lucide="arrow-up-right"></i></a>
+    </div>
+    <div class="table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr><th>Reference</th><th>Guest</th><th>Dates</th><th>Total</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <% recent.forEach(function(b) { %>
+            <tr>
+              <td><a class="table-ref" href="/admin/bookings/<%= b.id %>"><%= b.reference %></a></td>
+              <td><span class="table-strong"><%= b.guest_name %></span><span class="table-sub"><%= b.category_name %></span></td>
+              <td><%= shortDate(b.check_in) %> – <%= shortDate(b.check_out) %></td>
+              <td class="table-money"><%= money(b.total) %></td>
+              <td><span class="badge <%= b.booking_status %>"><%= b.booking_status.replace('_', ' ') %></span></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <span class="panel-eyebrow">Inventory</span>
+        <h2 class="panel-title">Room board</h2>
+      </div>
+      <a class="panel-link" href="/admin/rooms">Manage <i data-lucide="arrow-up-right"></i></a>
+    </div>
+    <div class="panel-body">
+      <div class="room-board-legend">
+        <span><i class="room-dot available"></i> Available <%= stats.available %></span>
+        <span><i class="room-dot occupied"></i> Occupied <%= stats.occupied %></span>
+        <span><i class="room-dot reserved"></i> Reserved <%= stats.reserved %></span>
+        <span><i class="room-dot maintenance"></i> Maintenance <%= stats.maintenance %></span>
+      </div>
+      <div class="room-board" aria-label="Room status board">
+        <% roomBoard.forEach(function(room) { %>
+          <span class="room-chip <%= room.status %>" title="Room <%= room.room_number %> · <%= room.category_name %> · <%= room.status %>"><%= room.room_number %></span>
+        <% }); %>
+      </div>
+    </div>
+  </section>
+</div>
+
+<section class="panel mix-panel">
+  <div class="panel-head">
+    <div>
+      <span class="panel-eyebrow">Demand by category</span>
+      <h2 class="panel-title">Reservations by room type</h2>
+    </div>
+  </div>
+  <div class="panel-body">
+    <div class="chart-wrap small"><canvas id="mixChart" aria-label="Reservations by room category" role="img"></canvas></div>
+  </div>
+</section>
+
+<%- include('partials/foot', { pageScripts: '<script src="/vendor/chart/chart.umd.js"></script><script>window.AURELIA_CHART = ' + JSON.stringify(chart) + ';</script><script src="/js/admin-dashboard.js"></script>' }) %>

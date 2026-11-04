@@ -1,0 +1,26 @@
+{
+  "name": "grand-aurelia-hotel",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Grand Aurelia Hotel & Resort — premium hotel website and interactive booking demo",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "seed": "node src/db/seed.js --reset"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "chart.js": "^4.4.7",
+    "compression": "^1.8.2",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "gsap": "^3.12.7",
+    "lucide": "^0.468.0",
+    "swiper": "^11.2.1"
+  }
+}

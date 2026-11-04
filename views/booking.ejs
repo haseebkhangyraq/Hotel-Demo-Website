@@ -1,0 +1,353 @@
+<%
+  const title = 'Reservations — Grand Aurelia Hotel & Resort';
+  const metaDescription = 'Reserve your stay at Grand Aurelia. Choose your dates, room, dining plan and extras, with transparent pricing and instant confirmation.';
+  const initialRoom = selectedCategory || categories.find(c => c.isAvailable) || categories[0];
+  const initialQuote = initialRoom ? initialRoom.quote : null;
+  const bookingPayload = {
+    categories: categories.map(c => ({
+      slug: c.slug, name: c.name, tagline: c.tagline, description: c.description,
+      coverImage: c.cover_image, price: c.price, size: c.size_sqm, bed: c.bed_type,
+      view: c.view, maxAdults: c.max_adults, maxChildren: c.max_children,
+      availableRooms: c.availableRooms, isAvailable: c.isAvailable, total: c.quote.total
+    })),
+    extras: extras,
+    plans: breakfastPlans,
+    transfers: transfers,
+    promos: promos,
+    dates: dates,
+    selectedSlug: initialRoom ? initialRoom.slug : ''
+  };
+  const json = JSON.stringify(bookingPayload).replace(/</g, '\\u003c').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029');
+%>
+<%- include('partials/head') %>
+
+<section class="booking-hero">
+  <div class="container">
+    <span class="eyebrow light">Reservations</span>
+    <h1>Your stay, <em>beautifully arranged.</em></h1>
+    <p>Choose your dates and room, add the details that matter, and we will take care of the rest. Every reservation is confirmed instantly.</p>
+    <div class="booking-hero-steps" aria-label="Booking steps">
+      <div class="booking-hero-step is-active"><span class="n">01</span> Dates &amp; guests</div>
+      <div class="booking-hero-step"><span class="n">02</span> Your room</div>
+      <div class="booking-hero-step"><span class="n">03</span> Extras</div>
+      <div class="booking-hero-step"><span class="n">04</span> Your details</div>
+      <div class="booking-hero-step"><span class="n">05</span> Confirmation</div>
+    </div>
+  </div>
+</section>
+
+<section class="booking-body">
+  <div class="container">
+    <div class="booking-shell">
+      <!-- ===================== FORM ===================== -->
+      <form class="booking-main" id="bookingForm" novalidate>
+        <!-- Step 1 -->
+        <div class="booking-step-card">
+          <div class="booking-step-head">
+            <span class="step-num">01</span>
+            <div>
+              <h2>Dates &amp; guests</h2>
+              <p>Check-in from <%= settings.checkin_time %> · check-out by <%= settings.checkout_time %>.</p>
+            </div>
+            <span class="step-side"><%= initialQuote ? initialQuote.nights + ' night' + (initialQuote.nights === 1 ? '' : 's') : dateLabel(dates.checkIn) %></span>
+          </div>
+
+          <div class="booking-date-grid">
+            <div class="field">
+              <label for="bookingCheckin">Arrival</label>
+              <input type="date" id="bookingCheckin" name="checkIn" value="<%= dates.checkIn %>" min="<%= dates.checkIn %>" required>
+              <span class="field-error"></span>
+            </div>
+            <div class="field">
+              <label for="bookingCheckout">Departure</label>
+              <input type="date" id="bookingCheckout" name="checkOut" value="<%= dates.checkOut %>" min="<%= dates.checkOut %>" required>
+              <span class="field-error"></span>
+            </div>
+            <div class="field">
+              <label for="bookingAdults">Adults</label>
+              <select id="bookingAdults" name="adults">
+                <% for (let i = 1; i <= 6; i++) { %><option value="<%= i %>" <%= dates.adults === i ? 'selected' : '' %>><%= i %></option><% } %>
+              </select>
+              <span class="field-error"></span>
+            </div>
+            <div class="field">
+              <label for="bookingChildren">Children</label>
+              <select id="bookingChildren" name="children">
+                <% for (let i = 0; i <= 4; i++) { %><option value="<%= i %>" <%= dates.children === i ? 'selected' : '' %>><%= i %></option><% } %>
+              </select>
+              <span class="field-error"></span>
+            </div>
+            <div class="field span-2">
+              <label for="bookingRooms">Number of rooms</label>
+              <select id="bookingRooms" name="rooms">
+                <% for (let i = 1; i <= 4; i++) { %><option value="<%= i %>" <%= dates.rooms === i ? 'selected' : '' %>><%= i %></option><% } %>
+              </select>
+              <span class="field-error"></span>
+            </div>
+          </div>
+
+          <div class="stay-comfort">
+            <span><i data-lucide="calendar-check"></i> <strong id="stayNights"><%= initialQuote ? initialQuote.nights : 0 %></strong>&nbsp;night stay</span>
+            <span><i data-lucide="info"></i> Rates are per room, per night, before taxes</span>
+            <span><i data-lucide="shield-check"></i> Secure demo booking</span>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="booking-step-card">
+          <div class="booking-step-head">
+            <span class="step-num">02</span>
+            <div>
+              <h2>Choose your room</h2>
+              <p>Live availability for <span id="roomDatesLabel"><%= dateLabel(dates.checkIn) %> – <%= dateLabel(dates.checkOut) %></span>.</p>
+            </div>
+            <span class="step-side" id="roomCountLabel"><%= categories.filter(c => c.isAvailable).length %> available</span>
+          </div>
+
+          <div class="booking-rooms" id="bookingRoomsList">
+            <% categories.forEach(function(room) { %>
+              <label class="booking-room-option <%= (!room.isAvailable || room.availableRooms < dates.rooms) ? 'is-unavailable' : '' %> <%= initialRoom && initialRoom.slug === room.slug ? 'is-selected' : '' %>"
+                     data-room-option data-slug="<%= room.slug %>" data-price="<%= room.price %>"
+                     data-name="<%= room.name %>" data-image="<%= room.cover_image %>"
+                     data-available="<%= room.availableRooms %>">
+                <input type="radio" name="categorySlug" value="<%= room.slug %>"
+                       <%= initialRoom && initialRoom.slug === room.slug ? 'checked' : '' %>
+                       <%= !room.isAvailable || room.availableRooms < dates.rooms ? 'disabled' : '' %>>
+                <img src="<%= room.cover_image %>" alt="<%= room.name %>" loading="lazy">
+                <div>
+                  <h4><%= room.name %></h4>
+                  <p><%= room.tagline %></p>
+                  <div class="room-option-meta">
+                    <span><%= room.size_sqm %> m²</span>
+                    <span><%= room.bed_type %></span>
+                    <span>Up to <%= room.max_adults + room.max_children %> guests</span>
+                  </div>
+                </div>
+                <div class="room-option-price">
+                  <strong><%= money(room.price) %></strong>
+                  <small>per night</small>
+                  <span class="avail-count"><%= room.availableRooms %> room<%= room.availableRooms === 1 ? '' : 's' %> left</span>
+                </div>
+              </label>
+            <% }); %>
+          </div>
+          <p class="field-hint mt-3"><i data-lucide="info" class="icon-xs"></i> Availability updates as you change your dates. If a room is unavailable, choose another category or adjust your stay.</p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="booking-step-card">
+          <div class="booking-step-head">
+            <span class="step-num">03</span>
+            <div>
+              <h2>Make it yours</h2>
+              <p>Optional additions, arranged before you arrive.</p>
+            </div>
+          </div>
+
+          <span class="option-label">Dining plan</span>
+          <div class="breakfast-options">
+            <% Object.entries(breakfastPlans).forEach(function([key, plan]) { %>
+              <label class="breakfast-option <%= key === 'none' ? 'is-selected' : '' %>" data-radio-card>
+                <input type="radio" name="breakfastPlan" value="<%= key %>" <%= key === 'none' ? 'checked' : '' %>>
+                <strong><%= plan.label %></strong>
+                <span><%= plan.description %></span>
+                <em><%= plan.price === 0 ? 'Included' : money(plan.price) + ' / person / night' %></em>
+              </label>
+            <% }); %>
+          </div>
+
+          <span class="option-label">Arrival transfer</span>
+          <div class="field">
+            <select id="bookingTransfer" name="transfer">
+              <% Object.entries(transfers).forEach(function([key, option]) { %>
+                <option value="<%= key %>"><%= option.label %><%= option.price ? ' · ' + money(option.price) : '' %></option>
+              <% }); %>
+            </select>
+          </div>
+
+          <span class="option-label">A little extra</span>
+          <div class="extras-grid">
+            <% extras.forEach(function(extra) { %>
+              <label class="extra-card" data-check-card>
+                <input type="checkbox" name="services" value="<%= extra.id %>">
+                <span class="extra-check"><i data-lucide="check"></i></span>
+                <span>
+                  <h4><%= extra.name %></h4>
+                  <p><%= extra.description %></p>
+                  <span class="extra-price"><%= money(extra.price) %></span>
+                </span>
+              </label>
+            <% }); %>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="booking-step-card">
+          <div class="booking-step-head">
+            <span class="step-num">04</span>
+            <div>
+              <h2>Your details</h2>
+              <p>The name on the reservation, and how we can reach you.</p>
+            </div>
+          </div>
+
+          <div class="booking-guest-fields">
+            <div class="form-grid">
+              <div class="field">
+                <label for="firstName">First name</label>
+                <input type="text" id="firstName" name="firstName" placeholder="Amelia" autocomplete="given-name" required>
+                <span class="field-error"></span>
+              </div>
+              <div class="field">
+                <label for="lastName">Last name</label>
+                <input type="text" id="lastName" name="lastName" placeholder="Hart" autocomplete="family-name" required>
+                <span class="field-error"></span>
+              </div>
+              <div class="field">
+                <label for="email">Email address</label>
+                <input type="email" id="email" name="email" placeholder="you@example.com" autocomplete="email" required>
+                <span class="field-error"></span>
+              </div>
+              <div class="field">
+                <label for="phone">Phone number</label>
+                <input type="tel" id="phone" name="phone" placeholder="+92 300 000 0000" autocomplete="tel" required>
+                <span class="field-error"></span>
+              </div>
+              <div class="field">
+                <label for="nationality">Nationality</label>
+                <input type="text" id="nationality" name="nationality" placeholder="Pakistan" autocomplete="country-name" required>
+                <span class="field-error"></span>
+              </div>
+              <div class="field">
+                <label for="specialRequests">Special requests <span style="text-transform:none;letter-spacing:0;">(optional)</span></label>
+                <input type="text" id="specialRequests" name="specialRequests" placeholder="A quiet room, a celebration…">
+                <span class="field-error"></span>
+              </div>
+            </div>
+          </div>
+
+          <span class="option-label">Payment</span>
+          <div class="payment-options">
+            <label class="payment-option is-selected" data-payment-option>
+              <input type="radio" name="paymentMethod" value="cash_at_hotel" checked>
+              <i data-lucide="hotel"></i>
+              <strong>Pay at the hotel</strong>
+              <span>Settle on arrival. Reservation held with card details.</span>
+            </label>
+            <label class="payment-option" data-payment-option>
+              <input type="radio" name="paymentMethod" value="demo_card">
+              <i data-lucide="credit-card"></i>
+              <strong>Pay now · Demo card</strong>
+              <span>Simulated payment. No real card is charged.</span>
+            </label>
+            <label class="payment-option" data-payment-option>
+              <input type="radio" name="paymentMethod" value="pay_at_checkout">
+              <i data-lucide="receipt"></i>
+              <strong>Pay at check-out</strong>
+              <span>For guests with a corporate account.</span>
+            </label>
+          </div>
+
+          <div class="card-fields" id="cardFields">
+            <div class="form-grid">
+              <div class="field span-2">
+                <label for="cardNumber">Card number</label>
+                <input type="text" id="cardNumber" name="cardNumber" placeholder="4242 4242 4242 4242" inputmode="numeric" maxlength="19" autocomplete="cc-number">
+                <span class="field-error"></span>
+              </div>
+              <div class="field">
+                <label for="cardExpiry">Expiry</label>
+                <input type="text" id="cardExpiry" name="cardExpiry" placeholder="MM/YY" inputmode="numeric" maxlength="5" autocomplete="cc-exp">
+                <span class="field-error"></span>
+              </div>
+              <div class="field">
+                <label for="cardCvc">CVV</label>
+                <input type="text" id="cardCvc" name="cardCvc" placeholder="123" inputmode="numeric" maxlength="4" autocomplete="cc-csc">
+                <span class="field-error"></span>
+              </div>
+            </div>
+            <p class="demo-card-tip"><i data-lucide="sparkles" class="icon-xs"></i> This is a demonstration. Use any 16-digit number, a future expiry and any 3-digit CVV.</p>
+          </div>
+
+          <label class="checkbox-row booking-consent">
+            <input type="checkbox" id="bookingTerms" name="terms" required>
+            <span>I have read and agree to the <a href="/terms" target="_blank" style="text-decoration:underline;">booking terms</a> and <a href="/privacy" target="_blank" style="text-decoration:underline;">privacy policy</a>. I understand this is a demonstration and no real payment will be taken.</span>
+          </label>
+          <span class="field-error" data-error-for="terms"></span>
+
+          <div class="booking-form-error" id="bookingError" role="alert"></div>
+
+          <div class="booking-submit-row">
+            <p><i data-lucide="lock"></i> Your details are used only to manage this reservation. No real payment is processed in this demo.</p>
+            <button type="submit" class="btn btn-gold" id="bookingSubmit">
+              <span class="btn-label">Confirm Reservation</span>
+              <i data-lucide="arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <!-- ===================== SUMMARY ===================== -->
+      <aside class="booking-summary" id="bookingSummary" aria-label="Reservation summary">
+        <div class="summary-head">
+          <span class="eyebrow light">Your reservation</span>
+          <h3>Stay summary</h3>
+          <p id="summaryStatus">Live pricing · updated as you choose</p>
+        </div>
+
+        <div class="summary-room" id="summaryRoom">
+          <% if (initialRoom) { %>
+            <img src="<%= initialRoom.cover_image %>" alt="<%= initialRoom.name %>">
+            <div>
+              <h4><%= initialRoom.name %></h4>
+              <p><%= initialRoom.size_sqm %> m² · <%= initialRoom.bed_type %><br><%= initialRoom.view %></p>
+            </div>
+          <% } else { %>
+            <div><h4>Select a room</h4><p>Choose from the list to see live pricing.</p></div>
+          <% } %>
+        </div>
+
+        <div class="summary-dates">
+          <div><span>Arrival</span><strong id="summaryCheckin"><%= shortDate(dates.checkIn) %></strong></div>
+          <div><span>Departure</span><strong id="summaryCheckout"><%= shortDate(dates.checkOut) %></strong></div>
+          <div><span>Guests</span><strong id="summaryGuests"><%= dates.adults %> adult<%= dates.adults === 1 ? '' : 's' %><%= dates.children ? ', ' + dates.children + ' child' + (dates.children === 1 ? '' : 'ren') : '' %></strong></div>
+          <div><span>Nights</span><strong id="summaryNights"><%= initialQuote ? initialQuote.nights : 0 %></strong></div>
+        </div>
+
+        <div class="summary-lines" id="summaryLines">
+          <% if (initialQuote) { %>
+            <div class="summary-line"><span>Room (<span id="lineNights"><%= initialQuote.nights %></span> nights)</span><span id="lineRoom"><%= money(initialQuote.roomTotal) %></span></div>
+            <% if (initialQuote.extraGuestTotal > 0) { %><div class="summary-line"><span>Extra guests</span><span><%= money(initialQuote.extraGuestTotal) %></span></div><% } %>
+            <% if (initialQuote.breakfastTotal > 0) { %><div class="summary-line"><span>Dining plan</span><span><%= money(initialQuote.breakfastTotal) %></span></div><% } %>
+            <% if (initialQuote.servicesTotal > 0) { %><div class="summary-line"><span>Extras &amp; transfer</span><span><%= money(initialQuote.servicesTotal) %></span></div><% } %>
+            <% if (initialQuote.discountTotal > 0) { %><div class="summary-line discount"><span>Promotional discount</span><span>− <%= money(initialQuote.discountTotal) %></span></div><% } %>
+            <div class="summary-line"><span>Service charge</span><span><%= money(initialQuote.serviceCharge) %></span></div>
+            <div class="summary-line"><span>GST</span><span><%= money(initialQuote.taxTotal) %></span></div>
+            <div class="summary-line total"><span>Total</span><span id="summaryTotal"><%= money(initialQuote.total) %></span></div>
+          <% } else { %>
+            <div class="summary-line"><span>Select a room to see pricing</span><span>—</span></div>
+          <% } %>
+        </div>
+
+        <div class="summary-promo">
+          <label for="promoCode">Promotional code</label>
+          <div class="summary-promo-row">
+            <input type="text" id="promoCode" name="promoCode" placeholder="Enter code" value="<%= query.promo || '' %>" form="bookingForm" autocomplete="off">
+            <button type="button" id="applyPromo">Apply</button>
+          </div>
+          <p class="promo-message" id="promoMessage">
+            <% if (query.promo) { %>Will be checked when pricing updates.<% } else { %>Try WEEKEND10 or AURELIA10.<% } %>
+          </p>
+        </div>
+
+        <div class="summary-foot">
+          <i data-lucide="shield-check"></i>
+          <span>No booking fees. Free cancellation up to 48 hours before arrival on flexible rates. This is a demonstration website — no real charge will be made.</span>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<script type="application/json" id="bookingData"><%- json %></script>
+<%- include('partials/footer', { pageScripts: '<script src="/js/booking.js"></script>' }) %>

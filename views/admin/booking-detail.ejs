@@ -1,0 +1,197 @@
+<%
+  const nights = Math.max(1, Math.round((new Date(booking.check_out + 'T00:00:00') - new Date(booking.check_in + 'T00:00:00')) / 86400000));
+  const paymentLabels = { cash_at_hotel: 'Pay at hotel', demo_card: 'Demo card', pay_at_checkout: 'Pay at check-out' };
+  const canConfirm = booking.booking_status === 'pending';
+  const canCheckIn = booking.booking_status === 'confirmed';
+  const canCheckOut = booking.booking_status === 'checked_in';
+  const canCancel = ['pending', 'confirmed'].includes(booking.booking_status);
+%>
+<%- include('partials/head') %>
+
+<div class="admin-breadcrumb">
+  <a href="/admin/bookings"><i data-lucide="arrow-left"></i> All reservations</a>
+</div>
+
+<div class="admin-page-head">
+  <div>
+    <span class="admin-eyebrow">Reservation <span class="admin-mono"><%= booking.reference %></span></span>
+    <h1><%= booking.guest_name %></h1>
+    <p><%= dateLabel(booking.check_in) %> → <%= dateLabel(booking.check_out) %> · <%= nights %> night<%= nights === 1 ? '' : 's' %> · <%= booking.category_name %></p>
+  </div>
+  <div class="admin-actions">
+    <span class="badge big <%= booking.booking_status %>"><%= booking.booking_status.replace('_', ' ') %></span>
+    <a class="admin-btn admin-btn-ghost" href="/booking/confirmation/<%= booking.reference %>" target="_blank" rel="noopener"><i data-lucide="printer"></i> Guest copy</a>
+  </div>
+</div>
+
+<div class="admin-detail-grid">
+  <div class="admin-detail-main">
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <span class="panel-eyebrow">The stay</span>
+          <h2 class="panel-title">Reservation summary</h2>
+        </div>
+        <span class="admin-mono muted"><%= booking.reference %></span>
+      </div>
+      <div class="panel-body">
+        <div class="detail-facts">
+          <div><span>Arrival</span><strong><%= dateLabel(booking.check_in) %></strong><em>from <%= settings.checkin_time %></em></div>
+          <div><span>Departure</span><strong><%= dateLabel(booking.check_out) %></strong><em>by <%= settings.checkout_time %></em></div>
+          <div><span>Guests</span><strong><%= booking.adults %> adult<%= booking.adults === 1 ? '' : 's' %><%= booking.children ? ', ' + booking.children + ' child' + (booking.children === 1 ? '' : 'ren') : '' %></strong><em><%= booking.rooms_count %> room<%= booking.rooms_count === 1 ? '' : 's' %> · <%= nights %> night<%= nights === 1 ? '' : 's' %></em></div>
+          <div><span>Category</span><strong><%= booking.category_name %></strong><em><%= money(booking.category_price) %> per room / night</em></div>
+        </div>
+
+        <h3 class="detail-heading">Rooms assigned</h3>
+        <div class="table-wrap">
+          <table class="admin-table compact">
+            <thead><tr><th>Room</th><th>Floor</th><th>Rate</th></tr></thead>
+            <tbody>
+              <% rooms.forEach(function(room) { %>
+                <tr>
+                  <td><a class="table-ref" href="/admin/rooms/<%= room.room_id %>">Room <%= room.room_number %></a></td>
+                  <td><%= room.floor %></td>
+                  <td class="table-money"><%= money(room.rate) %></td>
+                </tr>
+              <% }); %>
+              <% if (!rooms.length) { %><tr><td colspan="3" class="muted">No rooms assigned.</td></tr><% } %>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="detail-heading">Extras &amp; preferences</h3>
+        <div class="detail-list">
+          <div><span>Dining plan</span><strong><%= breakfast.label %></strong></div>
+          <div><span>Airport transfer</span><strong><%= transfer.label %></strong></div>
+          <div><span>Additional services</span><strong><%= services.length ? services.map(function(s) { return s.name; }).join(' · ') : 'None' %></strong></div>
+          <div><span>Special requests</span><strong><%= booking.special_requests || 'None noted' %></strong></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <span class="panel-eyebrow">Charges</span>
+          <h2 class="panel-title">Payment summary</h2>
+        </div>
+        <span class="badge pay-<%= booking.payment_status %>"><%= booking.payment_status %></span>
+      </div>
+      <div class="panel-body">
+        <div class="charge-list">
+          <div><span>Room total</span><span><%= money(booking.room_total) %></span></div>
+          <% if (booking.extra_guest_total) { %><div><span>Extra guests</span><span><%= money(booking.extra_guest_total) %></span></div><% } %>
+          <% if (booking.breakfast_total) { %><div><span>Dining plan</span><span><%= money(booking.breakfast_total) %></span></div><% } %>
+          <% if (booking.services_total) { %><div><span>Services &amp; transfer</span><span><%= money(booking.services_total) %></span></div><% } %>
+          <% if (booking.discount_total) { %><div class="discount"><span>Discount<%= booking.promo_code ? ' · ' + booking.promo_code : '' %></span><span>− <%= money(booking.discount_total) %></span></div><% } %>
+          <div><span>Service charge</span><span><%= money(booking.service_charge) %></span></div>
+          <div><span>GST</span><span><%= money(booking.tax_total) %></span></div>
+          <div class="total"><span>Total</span><span><%= money(booking.total) %></span></div>
+        </div>
+        <p class="admin-help">Payment method: <strong><%= paymentLabels[booking.payment_method] || booking.payment_method %></strong>. Booked <%= dateLabel(String(booking.created_at).slice(0, 10)) %>.</p>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <span class="panel-eyebrow">Guest history</span>
+          <h2 class="panel-title">Other stays</h2>
+        </div>
+      </div>
+      <% if (history.length) { %>
+        <div class="table-wrap">
+          <table class="admin-table compact">
+            <thead><tr><th>Reference</th><th>Stay</th><th>Total</th><th>Status</th></tr></thead>
+            <tbody>
+              <% history.forEach(function(h) { %>
+                <tr>
+                  <td><a class="table-ref" href="/admin/bookings/<%= h.id %>"><%= h.reference %></a></td>
+                  <td><%= h.check_in %> → <%= h.check_out %></td>
+                  <td class="table-money"><%= money(h.total) %></td>
+                  <td><span class="badge <%= h.booking_status %>"><%= h.booking_status.replace('_', ' ') %></span></td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      <% } else { %>
+        <div class="panel-body"><p class="admin-help">This is the guest’s first stay with us.</p></div>
+      <% } %>
+    </section>
+  </div>
+
+  <aside class="admin-detail-side">
+    <section class="panel">
+      <div class="panel-head"><div><span class="panel-eyebrow">Profile</span><h2 class="panel-title">Guest</h2></div></div>
+      <div class="panel-body">
+        <div class="guest-identity">
+          <span class="admin-avatar large"><%= booking.guest_name.charAt(0) %></span>
+          <div>
+            <strong><%= booking.guest_name %></strong>
+            <em><%= booking.nationality || 'Nationality not provided' %></em>
+          </div>
+        </div>
+        <div class="detail-list">
+          <div><span>Email</span><strong><a href="mailto:<%= booking.email %>"><%= booking.email %></a></strong></div>
+          <div><span>Phone</span><strong><a href="tel:<%= booking.phone %>"><%= booking.phone %></a></strong></div>
+          <% if (guest) { %>
+            <div><span>Guest since</span><strong><%= dateLabel(String(guest.created_at).slice(0, 10)) %></strong></div>
+            <div><span>VIP</span><strong><%= guest.vip ? 'Yes · VIP' : 'Standard' %></strong></div>
+          <% } %>
+        </div>
+        <% if (guest) { %><a class="admin-btn admin-btn-ghost btn-block" href="/admin/guests/<%= guest.id %>"><i data-lucide="user-round"></i> Guest profile</a><% } %>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head"><div><span class="panel-eyebrow">Front desk</span><h2 class="panel-title">Actions</h2></div></div>
+      <div class="panel-body stack">
+        <% if (canConfirm) { %>
+          <form action="/admin/bookings/<%= booking.id %>/status" method="post">
+            <input type="hidden" name="action" value="confirm">
+            <button class="admin-btn admin-btn-gold btn-block" type="submit"><i data-lucide="check"></i> Confirm reservation</button>
+          </form>
+        <% } %>
+        <% if (canCheckIn) { %>
+          <form action="/admin/bookings/<%= booking.id %>/status" method="post">
+            <input type="hidden" name="action" value="checkin">
+            <button class="admin-btn admin-btn-gold btn-block" type="submit"><i data-lucide="log-in"></i> Check guest in</button>
+          </form>
+        <% } %>
+        <% if (canCheckOut) { %>
+          <form action="/admin/bookings/<%= booking.id %>/status" method="post">
+            <input type="hidden" name="action" value="checkout">
+            <button class="admin-btn admin-btn-gold btn-block" type="submit"><i data-lucide="log-out"></i> Check guest out</button>
+          </form>
+        <% } %>
+        <% if (canCancel) { %>
+          <form action="/admin/bookings/<%= booking.id %>/status" method="post" data-confirm="Cancel reservation <%= booking.reference %>? Rooms will be released and any demo payment refunded.">
+            <input type="hidden" name="action" value="cancel">
+            <button class="admin-btn admin-btn-danger btn-block" type="submit"><i data-lucide="ban"></i> Cancel reservation</button>
+          </form>
+        <% } %>
+        <% if (!canConfirm && !canCheckIn && !canCheckOut && !canCancel) { %>
+          <p class="admin-help">This reservation is closed. No further front-desk actions are available.</p>
+        <% } %>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head"><div><span class="panel-eyebrow">Finance</span><h2 class="panel-title">Payment status</h2></div></div>
+      <div class="panel-body">
+        <form action="/admin/bookings/<%= booking.id %>/payment" method="post" class="admin-form-stack">
+          <label class="admin-label" for="paymentStatus">Mark payment as</label>
+          <select class="admin-input" id="paymentStatus" name="payment_status">
+            <option value="pending" <%= booking.payment_status === 'pending' ? 'selected' : '' %>>Pending</option>
+            <option value="paid" <%= booking.payment_status === 'paid' ? 'selected' : '' %>>Paid</option>
+            <option value="refunded" <%= booking.payment_status === 'refunded' ? 'selected' : '' %>>Refunded</option>
+          </select>
+          <button class="admin-btn admin-btn-ghost btn-block" type="submit"><i data-lucide="save"></i> Update payment</button>
+        </form>
+      </div>
+    </section>
+  </aside>
+</div>
+
+<%- include('partials/foot') %>

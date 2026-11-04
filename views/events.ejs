@@ -1,0 +1,200 @@
+<%
+  const title = 'Meetings, Weddings & Events — Grand Aurelia Hotel & Resort';
+  const metaDescription = 'Five flexible venues, bespoke menus and dedicated planners for weddings, conferences and celebrations for up to 800 guests at Grand Aurelia.';
+%>
+<%- include('partials/head') %>
+
+<section class="page-hero">
+  <div class="page-hero-image">
+    <img src="/images/wedding-01.jpg" alt="The Grand Aurelia Ballroom set for a wedding celebration">
+  </div>
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a><span>/</span><span>Meetings &amp; Events</span>
+    </nav>
+    <h1>Moments, <em>beautifully held.</em></h1>
+    <p class="hero-sub">
+      From a board meeting for eight to a wedding for eight hundred, our five venues and
+      dedicated planners bring precision and warmth to every occasion.
+    </p>
+    <div class="page-hero-meta">
+      <span><i data-lucide="users"></i> Up to 800 guests</span>
+      <span><i data-lucide="maximize"></i> 720 m² ballroom</span>
+      <span><i data-lucide="sparkles"></i> Bespoke menus &amp; styling</span>
+    </div>
+  </div>
+</section>
+
+<section class="events-page">
+  <div class="container">
+    <div class="event-intro">
+      <div>
+        <span class="eyebrow">Occasions</span>
+        <h2 class="section-heading">The right room for <em>the moment.</em></h2>
+      </div>
+      <p>
+        Each venue has its own character — a column-free ballroom, a garden-facing hall, a
+        light-filled conference centre, a discreet boardroom and an open-air pavilion beneath
+        ancient trees. Tell us the occasion and we will find the room.
+      </p>
+    </div>
+
+    <div class="event-spaces">
+      <% spaces.forEach(function(space) { %>
+        <article class="event-space" id="<%= space.slug %>" data-reveal="fade-up">
+          <div class="event-space-image">
+            <img src="<%= space.image %>" alt="<%= space.name %>" loading="lazy">
+            <span class="event-space-type"><%= space.type %></span>
+          </div>
+          <div class="event-space-body">
+            <h2><%= space.name %></h2>
+            <p><%= space.description %></p>
+            <div class="event-capacity-row">
+              <div class="event-capacity"><span>Theatre</span><strong><%= space.capacity_theatre %></strong></div>
+              <div class="event-capacity"><span>Banquet</span><strong><%= space.capacity_banquet %></strong></div>
+              <div class="event-capacity"><span>Reception</span><strong><%= space.capacity_reception %></strong></div>
+              <div class="event-capacity"><span>Area</span><strong><%= space.area_sqm %><small style="font-size:9px;"> m²</small></strong></div>
+            </div>
+            <div class="event-setups">
+              <% space.setups.forEach(function(setup) { %><span><%= setup %></span><% }); %>
+            </div>
+            <div class="event-space-foot">
+              <div class="event-price">
+                From <%= money(space.price_from) %>
+                <small>venue hire · bespoke packages available</small>
+              </div>
+              <a class="btn btn-sm btn-outline" href="#enquiry" data-space-select="<%= space.name %>">Enquire <i data-lucide="arrow-up-right"></i></a>
+            </div>
+          </div>
+        </article>
+      <% }); %>
+    </div>
+  </div>
+</section>
+
+<section class="event-packages">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <span class="eyebrow">Considered packages</span>
+        <h2 class="section-heading">A starting point, <em>beautifully set.</em></h2>
+      </div>
+      <div class="section-aside">
+        <p>Our packages are a starting point. Every menu, floor plan and detail can be tailored with your dedicated planner.</p>
+      </div>
+    </div>
+
+    <div class="package-grid">
+      <% packages.forEach(function(pkg, index) { %>
+        <article class="package-card <%= index === 1 ? 'featured' : '' %>" data-reveal="fade-up">
+          <% if (index === 1) { %><span class="package-tag">Most requested</span><% } %>
+          <h3><%= pkg.name %></h3>
+          <p><%= pkg.description %></p>
+          <div class="package-price">
+            <%= money(pkg.price) %>
+            <small><%= pkg.unit %></small>
+          </div>
+          <ul class="package-list">
+            <% pkg.includes.forEach(function(item) { %>
+              <li><i data-lucide="check"></i> <%= item %></li>
+            <% }); %>
+          </ul>
+          <a class="btn btn-outline" href="#enquiry" data-space-select="<%= pkg.name %>">Request a Proposal <i data-lucide="arrow-up-right"></i></a>
+        </article>
+      <% }); %>
+    </div>
+  </div>
+</section>
+
+<section class="event-enquiry-section" id="enquiry">
+  <div class="container">
+    <div class="event-enquiry-grid">
+      <div>
+        <span class="eyebrow light">Begin the conversation</span>
+        <h2 class="section-heading">Tell us about <em>your occasion.</em></h2>
+        <p class="lead">
+          Share a few details and our events team will write back within one working day with
+          availability, menus and a proposal shaped around your plans.
+        </p>
+        <div class="event-contact-facts">
+          <div class="event-contact-fact">
+            <i data-lucide="phone"></i>
+            <div><span>Events desk</span><strong><%= settings.phone %></strong></div>
+          </div>
+          <div class="event-contact-fact">
+            <i data-lucide="mail"></i>
+            <div><span>Email</span><strong><%= settings.email %></strong></div>
+          </div>
+          <div class="event-contact-fact">
+            <i data-lucide="map-pin"></i>
+            <div><span>Find us</span><strong><%= settings.address %>, <%= settings.city %></strong></div>
+          </div>
+          <div class="event-contact-fact">
+            <i data-lucide="message-circle"></i>
+            <div><span>WhatsApp</span><strong><a href="https://wa.me/<%= settings.whatsapp_digits %>?text=<%= encodeURIComponent('Hello Grand Aurelia, I would like to enquire about hosting an event.') %>" target="_blank" rel="noopener" style="border-bottom:1px solid rgba(255,255,255,.3);"><%= settings.whatsapp %></a></strong></div>
+          </div>
+        </div>
+      </div>
+
+      <form class="event-form" data-ajax-enquiry data-enquiry-type="event" novalidate>
+        <div class="form-grid">
+          <div class="field">
+            <label for="eventName">Your name</label>
+            <input type="text" id="eventName" name="name" placeholder="Full name" required autocomplete="name">
+            <span class="field-error"></span>
+          </div>
+          <div class="field">
+            <label for="eventEmail">Email</label>
+            <input type="email" id="eventEmail" name="email" placeholder="you@example.com" required autocomplete="email">
+            <span class="field-error"></span>
+          </div>
+          <div class="field">
+            <label for="eventPhone">Phone</label>
+            <input type="tel" id="eventPhone" name="phone" placeholder="+92" autocomplete="tel">
+            <span class="field-error"></span>
+          </div>
+          <div class="field">
+            <label for="eventType">Occasion</label>
+            <select id="eventType" name="eventType">
+              <option>Wedding</option>
+              <option>Corporate conference</option>
+              <option>Board meeting</option>
+              <option>Gala dinner</option>
+              <option>Private celebration</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="eventSpace">Preferred venue</label>
+            <select id="eventSpace" name="space">
+              <option value="">Help me choose</option>
+              <% spaces.forEach(function(space) { %><option><%= space.name %></option><% }); %>
+              <% packages.forEach(function(pkg) { %><option><%= pkg.name %></option><% }); %>
+            </select>
+          </div>
+          <div class="field">
+            <label for="eventDate">Preferred date</label>
+            <input type="date" id="eventDate" name="eventDate">
+          </div>
+          <div class="field">
+            <label for="eventGuests">Guests</label>
+            <input type="number" id="eventGuests" name="guests" min="1" max="1000" placeholder="Approx. 120">
+          </div>
+          <div class="field">
+            <label for="eventBudget">Budget <span style="text-transform:none;letter-spacing:0;">(optional)</span></label>
+            <input type="text" id="eventBudget" name="budget" placeholder="e.g. PKR 500,000">
+          </div>
+          <div class="field span-2">
+            <label for="eventMessage">Tell us about your plans</label>
+            <textarea id="eventMessage" name="message" placeholder="The occasion, the mood, anything you have in mind…" required></textarea>
+            <span class="field-error"></span>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-gold btn-block mt-3">Send Enquiry <i data-lucide="arrow-right"></i></button>
+        <p class="form-status" data-status aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

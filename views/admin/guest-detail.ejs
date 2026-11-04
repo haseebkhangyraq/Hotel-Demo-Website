@@ -1,0 +1,111 @@
+<%
+  const stays = bookings.filter(function(b) { return b.booking_status !== 'cancelled'; });
+  const spend = stays.reduce(function(sum, b) { return sum + b.total; }, 0);
+%>
+<%- include('partials/head') %>
+
+<div class="admin-breadcrumb">
+  <a href="/admin/guests"><i data-lucide="arrow-left"></i> All guests</a>
+</div>
+
+<div class="admin-page-head">
+  <div>
+    <span class="admin-eyebrow">Guest profile</span>
+    <h1><%= guest.first_name %> <em><%= guest.last_name %></em></h1>
+    <p>Guest since <%= dateLabel(String(guest.created_at).slice(0, 10)) %><%= guest.vip ? ' · VIP guest' : '' %></p>
+  </div>
+  <div class="admin-actions">
+    <a class="admin-btn admin-btn-ghost" href="mailto:<%= guest.email %>"><i data-lucide="mail"></i> Email guest</a>
+    <a class="admin-btn admin-btn-gold" href="/booking" target="_blank" rel="noopener"><i data-lucide="plus"></i> New reservation</a>
+  </div>
+</div>
+
+<div class="stat-grid guest-stats">
+  <article class="stat-card"><div class="stat-top"><span>Stays</span><i data-lucide="calendar-check"></i></div><strong class="stat-value"><%= stays.length %></strong><p class="stat-meta">Confirmed or completed</p></article>
+  <article class="stat-card"><div class="stat-top"><span>Lifetime value</span><i data-lucide="wallet"></i></div><strong class="stat-value"><%= money(spend) %></strong><p class="stat-meta">Across all active reservations</p></article>
+  <article class="stat-card"><div class="stat-top"><span>Last stay</span><i data-lucide="clock"></i></div><strong class="stat-value small-value"><%= stays.length ? stays[0].check_in : '—' %></strong><p class="stat-meta"><%= stays.length ? stays[0].check_out : 'No stays recorded' %></p></article>
+  <article class="stat-card"><div class="stat-top"><span>Segment</span><i data-lucide="sparkles"></i></div><strong class="stat-value small-value"><%= guest.vip ? 'VIP' : 'Standard' %></strong><p class="stat-meta"><%= guest.nationality || 'Nationality not set' %></p></article>
+</div>
+
+<div class="admin-detail-grid">
+  <div class="admin-detail-main">
+    <section class="panel">
+      <div class="panel-head"><div><span class="panel-eyebrow">Contact record</span><h2 class="panel-title">Edit profile</h2></div></div>
+      <div class="panel-body">
+        <form action="/admin/guests/<%= guest.id %>" method="post" class="admin-form-grid">
+          <div class="admin-field">
+            <label class="admin-label" for="firstName">First name</label>
+            <input class="admin-input" id="firstName" name="first_name" value="<%= guest.first_name %>" required>
+          </div>
+          <div class="admin-field">
+            <label class="admin-label" for="lastName">Last name</label>
+            <input class="admin-input" id="lastName" name="last_name" value="<%= guest.last_name %>" required>
+          </div>
+          <div class="admin-field">
+            <label class="admin-label" for="guestEmail">Email</label>
+            <input class="admin-input" id="guestEmail" name="email" type="email" value="<%= guest.email %>" required>
+          </div>
+          <div class="admin-field">
+            <label class="admin-label" for="guestPhone">Phone</label>
+            <input class="admin-input" id="guestPhone" name="phone" value="<%= guest.phone || '' %>">
+          </div>
+          <div class="admin-field">
+            <label class="admin-label" for="guestNationality">Nationality</label>
+            <input class="admin-input" id="guestNationality" name="nationality" value="<%= guest.nationality || '' %>">
+          </div>
+          <label class="admin-checkbox">
+            <input type="checkbox" name="vip" value="1" <%= guest.vip ? 'checked' : '' %>>
+            <span>Mark as VIP guest</span>
+          </label>
+          <div class="admin-form-actions span-2">
+            <button class="admin-btn admin-btn-gold" type="submit"><i data-lucide="save"></i> Save profile</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head"><div><span class="panel-eyebrow">History</span><h2 class="panel-title">Reservations</h2></div></div>
+      <% if (bookings.length) { %>
+        <div class="table-wrap">
+          <table class="admin-table">
+            <thead><tr><th>Reference</th><th>Stay</th><th>Guests</th><th>Total</th><th>Status</th></tr></thead>
+            <tbody>
+              <% bookings.forEach(function(b) { %>
+                <tr>
+                  <td><a class="table-ref" href="/admin/bookings/<%= b.id %>"><%= b.reference %></a></td>
+                  <td><span class="table-strong"><%= b.check_in %> → <%= b.check_out %></span><span class="table-sub"><%= b.rooms_count %> room<%= b.rooms_count === 1 ? '' : 's' %></span></td>
+                  <td><%= b.adults %>A<%= b.children ? ' · ' + b.children + 'C' : '' %></td>
+                  <td class="table-money"><%= money(b.total) %></td>
+                  <td><span class="badge <%= b.booking_status %>"><%= b.booking_status.replace('_', ' ') %></span></td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      <% } else { %>
+        <div class="panel-body"><p class="admin-help">No reservations on record.</p></div>
+      <% } %>
+    </section>
+  </div>
+
+  <aside class="admin-detail-side">
+    <section class="panel">
+      <div class="panel-head"><div><span class="panel-eyebrow">Identity</span><h2 class="panel-title">Guest card</h2></div></div>
+      <div class="panel-body">
+        <div class="guest-identity large">
+          <span class="admin-avatar xlarge"><%= guest.first_name.charAt(0) %><%= guest.last_name.charAt(0) %></span>
+          <div><strong><%= guest.first_name %> <%= guest.last_name %></strong><em><%= guest.email %></em></div>
+        </div>
+        <div class="detail-list">
+          <div><span>Phone</span><strong><%= guest.phone || '—' %></strong></div>
+          <div><span>Nationality</span><strong><%= guest.nationality || '—' %></strong></div>
+          <div><span>Guest since</span><strong><%= dateLabel(String(guest.created_at).slice(0, 10)) %></strong></div>
+          <div><span>Average stay</span><strong><%= stays.length ? money(Math.round(spend / stays.length)) : '—' %></strong></div>
+        </div>
+      </div>
+    </section>
+  </aside>
+</div>
+
+<%- include('partials/foot') %>

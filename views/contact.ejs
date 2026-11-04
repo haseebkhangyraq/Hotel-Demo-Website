@@ -1,0 +1,180 @@
+<%
+  const title = 'Contact — Grand Aurelia Hotel & Resort';
+  const metaDescription = 'Contact Grand Aurelia in Islamabad. Reserve a room, plan a celebration or ask our concierge a question by telephone, email or WhatsApp.';
+  const faqs = [
+    { q: 'What time is check-in and check-out?', a: 'Check-in begins at ' + settings.checkin_time + ' and check-out is by ' + settings.checkout_time + '. Early arrival and late departure can usually be arranged — please ask reservations in advance.' },
+    { q: 'How far is the hotel from Islamabad International Airport?', a: 'The airport is approximately 40 minutes by car. Chauffeured transfers can be added to your reservation, and our concierge can arrange a car at any hour.' },
+    { q: 'Is parking available?', a: 'Yes. Complimentary self-parking and valet parking are available for all guests, with accessible spaces close to the main entrance.' },
+    { q: 'Are children welcome?', a: 'Warmly. We offer family rooms, cots and high chairs, family pool hours and a supervised kids’ club. Children’s menus are available in every dining room.' },
+    { q: 'Can you accommodate dietary requirements?', a: 'Of course. Please tell us about allergies or preferences before you arrive, and our kitchen will prepare alternatives. Many dishes can be made vegan, gluten-free or without spice.' },
+    { q: 'What is your cancellation policy?', a: 'Flexible rates may be cancelled free of charge up to 48 hours before arrival. Promotional and advance-purchase rates may be non-refundable; the terms are shown when you reserve.' }
+  ];
+%>
+<%- include('partials/head') %>
+
+<section class="page-hero">
+  <div class="page-hero-image">
+    <img src="/images/resort-04.jpg" alt="The entrance to Grand Aurelia Hotel & Resort">
+  </div>
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a><span>/</span><span>Contact</span>
+    </nav>
+    <h1>Begin a <em>conversation.</em></h1>
+    <p class="hero-sub">
+      A reservation, a celebration, or simply a question. Our reservations team answers the
+      telephone day and night, and replies to every message within one working day.
+    </p>
+  </div>
+</section>
+
+<section class="contact-page">
+  <div class="container">
+    <div class="contact-cards">
+      <a class="contact-card" href="tel:<%= settings.phone.replace(/[^+\d]/g, '') %>">
+        <i data-lucide="phone"></i>
+        <span>Telephone</span>
+        <strong><%= settings.phone %></strong>
+        <small>Reservations · answered 24 hours</small>
+      </a>
+      <a class="contact-card" href="mailto:<%= settings.email %>">
+        <i data-lucide="mail"></i>
+        <span>Email</span>
+        <strong style="font-size:17px;"><%= settings.email %></strong>
+        <small>Replies within one working day</small>
+      </a>
+      <a class="contact-card" href="https://wa.me/<%= settings.whatsapp_digits %>?text=<%= encodeURIComponent('Hello Grand Aurelia, I would like to enquire about a stay.') %>" target="_blank" rel="noopener">
+        <i data-lucide="message-circle"></i>
+        <span>WhatsApp</span>
+        <strong><%= settings.whatsapp %></strong>
+        <small>Message us for a quick reply</small>
+      </a>
+      <a class="contact-card" href="<%= settings.maps_url %>" target="_blank" rel="noopener">
+        <i data-lucide="map-pin"></i>
+        <span>Find us</span>
+        <strong style="font-size:17px;"><%= settings.address %></strong>
+        <small><%= settings.city %>, <%= settings.country %></small>
+      </a>
+    </div>
+
+    <div class="contact-grid">
+      <div class="contact-form-wrap">
+        <span class="eyebrow">Write to us</span>
+        <h2>Tell us a little about <em>your plans.</em></h2>
+        <p>
+          Fill in the form and our reservations team will be in touch. For urgent matters,
+          please call — the telephone is always answered by a person.
+        </p>
+        <form data-ajax-contact novalidate>
+          <div class="form-grid">
+            <div class="field">
+              <label for="contactName">Your name</label>
+              <input type="text" id="contactName" name="name" placeholder="Full name" required autocomplete="name">
+              <span class="field-error"></span>
+            </div>
+            <div class="field">
+              <label for="contactEmail">Email</label>
+              <input type="email" id="contactEmail" name="email" placeholder="you@example.com" required autocomplete="email">
+              <span class="field-error"></span>
+            </div>
+            <div class="field">
+              <label for="contactPhone">Phone <span style="text-transform:none;letter-spacing:0;">(optional)</span></label>
+              <input type="tel" id="contactPhone" name="phone" placeholder="+92" autocomplete="tel">
+              <span class="field-error"></span>
+            </div>
+            <div class="field">
+              <label for="contactSubject">Subject</label>
+              <select id="contactSubject" name="subject">
+                <option>Room reservation</option>
+                <option>Dining &amp; private dining</option>
+                <option>Wedding or event</option>
+                <option>Spa &amp; wellness</option>
+                <option>Careers</option>
+                <option>General enquiry</option>
+              </select>
+            </div>
+            <div class="field span-2">
+              <label for="contactMessage">Message</label>
+              <textarea id="contactMessage" name="message" placeholder="Tell us a little about your plans…" required></textarea>
+              <span class="field-error"></span>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-gold mt-3">Send Message <i data-lucide="arrow-right"></i></button>
+          <p class="form-status" data-status aria-live="polite"></p>
+        </form>
+      </div>
+
+      <div class="contact-map-wrap">
+        <div class="contact-map location-map">
+          <svg class="map-svg" viewBox="0 0 700 530" role="img" aria-label="Stylised map showing Grand Aurelia in the Margalla Hills, Islamabad">
+            <rect width="700" height="530" fill="#EEE9DF"/>
+            <path d="M-40 430 C120 360 210 410 330 340 C450 270 560 310 760 220" fill="none" stroke="#D8D0C0" stroke-width="28"/>
+            <path d="M-40 430 C120 360 210 410 330 340 C450 270 560 310 760 220" fill="none" stroke="#F8F5EF" stroke-width="2" stroke-dasharray="10 10"/>
+            <path d="M90 -30 C110 110 200 160 210 300 C218 400 150 470 120 560" fill="none" stroke="#DED6C6" stroke-width="14"/>
+            <path d="M480 -20 C470 120 540 200 520 330 C505 430 580 480 600 560" fill="none" stroke="#DED6C6" stroke-width="14"/>
+            <path d="M-20 150 C130 190 260 130 380 180 C500 230 620 160 720 190" fill="none" stroke="#E4DCCD" stroke-width="6"/>
+            <path d="M250 0 L250 90 L340 90 L340 170 L420 170" fill="none" stroke="#E4DCCD" stroke-width="4"/>
+            <path d="M0 320 L120 320 L120 250 L230 250" fill="none" stroke="#E4DCCD" stroke-width="4"/>
+            <circle cx="120" cy="90" r="48" fill="#E5DDCE"/>
+            <circle cx="575" cy="410" r="62" fill="#E9E2D4"/>
+            <text x="42" y="94" class="map-label" font-size="14">Margalla Hills</text>
+            <text x="515" y="414" class="map-label" font-size="14">Islamabad</text>
+            <text x="250" y="368" class="map-label" font-size="13">Aurelia Boulevard</text>
+          </svg>
+          <div class="map-marker">
+            <span class="map-marker-pin"></span>
+            <span class="map-marker-label">Grand Aurelia</span>
+          </div>
+          <div class="map-address">
+            <h4><%= settings.short_name %></h4>
+            <p><%= settings.address %><br><%= settings.city %>, <%= settings.country %></p>
+            <a href="<%= settings.maps_url %>" target="_blank" rel="noopener">Open in Maps <i data-lucide="arrow-up-right"></i></a>
+          </div>
+        </div>
+
+        <div class="contact-details">
+          <div class="contact-detail">
+            <span>Reservations</span>
+            <strong><a href="tel:<%= settings.phone.replace(/[^+\d]/g, '') %>"><%= settings.phone %></a></strong>
+          </div>
+          <div class="contact-detail">
+            <span>Email</span>
+            <strong><a href="mailto:<%= settings.email %>"><%= settings.email %></a></strong>
+          </div>
+          <div class="contact-detail">
+            <span>Check-in</span>
+            <strong>From <%= settings.checkin_time %></strong>
+          </div>
+          <div class="contact-detail">
+            <span>Check-out</span>
+            <strong>By <%= settings.checkout_time %></strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="contact-faq">
+      <div>
+        <span class="eyebrow">Good to know</span>
+        <h2>Questions, <em>answered.</em></h2>
+        <p style="font-size:12px;color:var(--muted);line-height:1.8;margin-top:14px;max-width:300px;">
+          A few things guests ask us most often. If your question is not here, write to us — a
+          person will reply.
+        </p>
+      </div>
+      <div class="contact-faq-list" data-faq-list>
+        <% faqs.forEach(function(faq, index) { %>
+          <div class="faq-item <%= index === 0 ? 'is-open' : '' %>">
+            <button type="button" class="faq-q" aria-expanded="<%= index === 0 ? 'true' : 'false' %>">
+              <%= faq.q %>
+              <i data-lucide="plus"></i>
+            </button>
+            <div class="faq-a"><p><%= faq.a %></p></div>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

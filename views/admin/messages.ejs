@@ -1,0 +1,44 @@
+<%- include('partials/head') %>
+
+<div class="admin-page-head">
+  <div>
+    <span class="admin-eyebrow">Inbox</span>
+    <h1>Contact Messages</h1>
+    <p>Messages sent from the website contact forms, in the order they arrived.</p>
+  </div>
+</div>
+
+<% if (messages.length) { %>
+  <div class="enquiry-admin-list">
+    <% messages.forEach(function(m) { %>
+      <article class="panel enquiry-admin-card">
+        <div class="enquiry-admin-head">
+          <div>
+            <span class="admin-eyebrow">Message #<%= m.id %></span>
+            <h2><%= m.subject || 'Website enquiry' %></h2>
+            <p><strong><%= m.name %></strong> · <a href="mailto:<%= m.email %>"><%= m.email %></a><%= m.phone ? ' · ' + m.phone : '' %></p>
+          </div>
+          <span class="badge status-<%= m.status %>"><%= m.status %></span>
+        </div>
+        <div class="panel-body">
+          <p class="enquiry-message"><%= m.message %></p>
+          <div class="enquiry-admin-foot">
+            <span class="admin-help"><i data-lucide="clock"></i> <%= dateLabel(String(m.created_at).slice(0, 10)) %></span>
+            <form action="/admin/messages/<%= m.id %>/status" method="post" class="inline-status">
+              <select name="status" class="admin-select-mini" aria-label="Status for message <%= m.id %>" data-auto-submit>
+                <% ['new','read','replied'].forEach(function(s) { %>
+                  <option value="<%= s %>" <%= m.status === s ? 'selected' : '' %>><%= s %></option>
+                <% }); %>
+              </select>
+              <button class="admin-btn admin-btn-ghost btn-sm" type="submit">Update</button>
+            </form>
+          </div>
+        </div>
+      </article>
+    <% }); %>
+  </div>
+<% } else { %>
+  <section class="panel"><div class="admin-empty"><i data-lucide="mail"></i><h3>No messages yet</h3><p>Messages from the website contact forms will appear here.</p></div></section>
+<% } %>
+
+<%- include('partials/foot') %>

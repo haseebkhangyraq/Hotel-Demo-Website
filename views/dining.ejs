@@ -1,0 +1,147 @@
+<%
+  const title = 'Dining & Menu — Grand Aurelia Hotel & Resort';
+  const metaDescription = 'Explore the Grand Aurelia dining menu: seasonal Pakistani and continental dishes, charcoal grill, patisserie and a 24-hour in-room dining menu.';
+%>
+<%- include('partials/head') %>
+
+<section class="page-hero dining-hero">
+  <div class="page-hero-image">
+    <img src="/images/dining-01.jpg" alt="AURUM fine dining at Grand Aurelia, set with candlelight and crystal">
+  </div>
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a><span>/</span><span>Dining</span>
+    </nav>
+    <h1>The <em>menu.</em></h1>
+    <p class="hero-sub">
+      Five dining rooms, one kitchen philosophy: cook what is finest today, and serve it with
+      generosity. Browse the full menu below, or download a sample to keep.
+    </p>
+    <div class="page-hero-meta">
+      <span><i data-lucide="utensils"></i> Noor · AURUM · Saffron &amp; Smoke</span>
+      <span><i data-lucide="clock"></i> In-room dining · 24 hours</span>
+      <span><i data-lucide="leaf"></i> Dietary needs welcomed</span>
+    </div>
+  </div>
+</section>
+
+<section class="menu-intro container">
+  <div>
+    <span class="eyebrow">From the kitchen</span>
+    <h2 class="section-heading">A table shaped by <em>the season.</em></h2>
+  </div>
+  <div>
+    <p>
+      Our menus follow the markets and the garden. Dishes change with the season, and every
+      plate can be adapted for allergies or preferences — simply speak with your server.
+      Prices are in Pakistani Rupees and exclusive of applicable taxes.
+    </p>
+    <div class="menu-actions">
+      <a class="btn btn-gold" href="/dining/menu/download">
+        Download Sample Menu <i data-lucide="download"></i>
+      </a>
+      <a class="btn btn-outline" href="/contact">Private Dining Enquiry</a>
+    </div>
+  </div>
+</section>
+
+<div class="menu-toolbar">
+  <div class="container menu-toolbar-inner">
+    <div class="menu-cats" role="tablist" aria-label="Filter the menu by category">
+      <button type="button" class="menu-cat is-active" data-menu-filter="all" role="tab" aria-selected="true">All Dishes</button>
+      <% categories.forEach(function(cat) { %>
+        <button type="button" class="menu-cat" data-menu-filter="<%= cat %>" role="tab" aria-selected="false"><%= cat %></button>
+      <% }); %>
+    </div>
+    <div class="menu-search">
+      <i data-lucide="search"></i>
+      <label class="sr-only" for="menuSearch">Search the menu</label>
+      <input type="search" id="menuSearch" placeholder="Search dishes, ingredients…" autocomplete="off">
+    </div>
+  </div>
+</div>
+
+<section class="menu-body">
+  <div class="container">
+    <div class="menu-result-meta">
+      <span><strong id="menuCount"><%= menu.length %></strong> dishes · <span id="menuCategoryLabel">the full menu</span></span>
+      <span><i data-lucide="sparkles" class="icon-xs"></i> Chef’s selection marked in gold</span>
+    </div>
+
+    <div class="menu-grid" id="menuGrid">
+      <% menu.forEach(function(item, index) { %>
+        <button type="button" class="menu-card"
+                data-menu-card
+                data-id="<%= item.id %>"
+                data-name="<%= item.name %>"
+                data-category="<%= item.category %>"
+                data-description="<%= item.description %>"
+                data-price="<%= money(item.price) %>"
+                data-image="<%= item.image %>"
+                data-dietary="<%= item.dietary.join('|') %>"
+                data-featured="<%= item.featured ? 'true' : 'false' %>"
+                data-room-service="<%= item.room_service ? 'true' : 'false' %>"
+                data-reveal="fade-up"
+                aria-label="View <%= item.name %>">
+          <span class="menu-card-media">
+            <img src="<%= item.image %>" alt="<%= item.name %>" loading="<%= index < 6 ? 'eager' : 'lazy' %>">
+            <% if (item.featured) { %>
+              <span class="menu-featured-badge"><i data-lucide="star"></i> Chef’s selection</span>
+            <% } %>
+          </span>
+          <span class="menu-card-body">
+            <span class="menu-card-cat"><%= item.category %></span>
+            <h3><%= item.name %></h3>
+            <p><%= item.description %></p>
+            <span class="menu-card-foot">
+              <span class="menu-price"><%= money(item.price) %></span>
+              <span class="menu-diet">
+                <% item.dietary.forEach(function(diet) { %><span><%= diet %></span><% }); %>
+              </span>
+            </span>
+          </span>
+        </button>
+      <% }); %>
+    </div>
+
+    <div class="menu-empty" id="menuEmpty" hidden>
+      <h3>Nothing on the menu quite matches</h3>
+      <p>Try another word, or browse the full menu. Our kitchen is always happy to prepare something especially for you.</p>
+      <button type="button" class="btn btn-outline mt-3" data-menu-reset>Show the full menu</button>
+    </div>
+
+    <div class="menu-footnote">
+      <p>
+        <strong style="color:var(--navy);font-weight:600;">Allergies &amp; preferences.</strong>
+        Please tell your server about any dietary requirements. Many dishes can be prepared gluten-free,
+        vegan or without spice, and our kitchen keeps a detailed allergen record. Room service is
+        available around the clock — dial 0 from your room.
+      </p>
+      <a class="btn btn-outline" href="/guest-services">In-Room Dining <i data-lucide="arrow-up-right"></i></a>
+    </div>
+  </div>
+</section>
+
+<!-- Menu item modal -->
+<div class="modal" id="menuModal" role="dialog" aria-modal="true" aria-labelledby="menuModalTitle" aria-hidden="true">
+  <div class="modal-backdrop" data-menu-close></div>
+  <div class="modal-panel modal-wide">
+    <button type="button" class="modal-close" data-menu-close aria-label="Close dish details"><i data-lucide="x"></i></button>
+    <div class="menu-modal">
+      <div class="menu-modal-image"><img id="menuModalImage" src="/images/food-01.jpg" alt=""></div>
+      <div class="menu-modal-body">
+        <span class="menu-card-cat" id="menuModalCategory">Dish</span>
+        <h3 id="menuModalTitle">A dish from our kitchen</h3>
+        <p id="menuModalDescription"></p>
+        <div class="menu-modal-meta">
+          <span class="menu-price" id="menuModalPrice"></span>
+          <div class="menu-diet" id="menuModalDiet"></div>
+        </div>
+        <p id="menuModalService" style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-deep);margin-top:16px;"></p>
+        <a class="btn btn-gold" href="/guest-services">Order to your room <i data-lucide="arrow-up-right"></i></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer', { pageScripts: '<script src="/js/menu.js"></script>' }) %>

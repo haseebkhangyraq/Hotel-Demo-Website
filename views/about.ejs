@@ -1,0 +1,114 @@
+<%
+  const title = 'Our Story — Grand Aurelia Hotel & Resort';
+  const metaDescription = 'The story of Grand Aurelia: a quiet kind of luxury in the Margalla Hills, built around warmth, craft and a belief that hospitality should feel effortless.';
+%>
+<%- include('partials/head') %>
+
+<section class="page-hero">
+  <div class="page-hero-image">
+    <img src="/images/garden-01.jpg" alt="The scented gardens at Grand Aurelia in the early morning">
+  </div>
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a><span>/</span><span>Our Story</span>
+    </nav>
+    <h1>A quieter kind <em>of luxury.</em></h1>
+    <p class="hero-sub">
+      Grand Aurelia was built around a simple idea: that the most memorable hospitality is felt
+      rather than announced. This is the story of how we came to be — and what we believe.
+    </p>
+  </div>
+</section>
+
+<section class="about-page">
+  <div class="about-story">
+    <div class="container">
+      <div class="about-story-grid">
+        <div class="about-story-image" data-reveal="fade-up">
+          <img src="/images/resort-01.jpg" alt="The arrival court at Grand Aurelia">
+          <div class="about-story-badge">
+            <strong><%= settings.established %></strong>
+            <span>Established</span>
+          </div>
+        </div>
+        <div class="about-story-copy">
+          <span class="eyebrow" data-reveal="fade-up">Our story</span>
+          <h2 data-reveal="fade-up">Built slowly, <em>with care.</em></h2>
+          <p data-reveal="fade-up">
+            The land on the lower slopes of the Margalla Hills had been a family garden for
+            three generations. When we began to imagine a hotel here, we knew it could not be
+            anything loud. The trees would stay. The views would stay. The house would be
+            designed around them, not over them.
+          </p>
+          <p data-reveal="fade-up">
+            We travelled to Lahore, Peshawar and the northern valleys to find craftspeople who
+            still work by hand — plasterers, carpenters, weavers and stone masons. Their work is
+            in every room: the warmth of the oak, the texture of the walls, the weight of a
+            hand-finished door. It is a hotel that asks you to slow down, because it was made
+            slowly.
+          </p>
+          <p data-reveal="fade-up">
+            Today, Grand Aurelia has forty rooms and suites, five dining rooms, a Himalayan spa
+            and three acres of gardens. But the idea has not changed. We are here to make your
+            day feel easier, and to make you feel at home — only a little more extraordinary.
+          </p>
+          <div class="welcome-signature" data-reveal="fade-up">
+            <span class="sig">Zara Qureshi</span>
+            <span class="sig-meta">General Manager<br>Grand Aurelia Hotel &amp; Resort</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="about-values">
+    <div class="container">
+      <div class="text-center">
+        <span class="eyebrow centered">What we believe</span>
+        <h2 class="section-heading" style="margin-top:16px;">Three quiet <em>principles.</em></h2>
+      </div>
+      <div class="about-values-grid">
+        <article class="about-value" data-reveal="fade-up">
+          <div class="num">01</div>
+          <h3>Warmth first</h3>
+          <p>Luxury is not a marble lobby. It is the person who remembers how you take your tea, and the ease with which everything is arranged.</p>
+        </article>
+        <article class="about-value" data-reveal="fade-up">
+          <div class="num">02</div>
+          <h3>Made by hand</h3>
+          <p>We work with craftspeople across Pakistan. Their materials and their patience are part of the architecture, and part of the stay.</p>
+        </article>
+        <article class="about-value" data-reveal="fade-up">
+          <div class="num">03</div>
+          <h3>Room to breathe</h3>
+          <p>Gardens left quiet. Corridors kept generous. A hotel should give you space, not fill it. Everything here is designed to let the day unfold.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="about-stats">
+    <div class="container">
+      <div class="about-stats-grid">
+        <div class="about-stat"><strong data-count="40">40</strong><span>Rooms &amp; Suites</span></div>
+        <div class="about-stat"><strong data-count="11">11</strong><span>Room Categories</span></div>
+        <div class="about-stat"><strong data-count="5">5</strong><span>Event Venues</span></div>
+        <div class="about-stat"><strong data-count="3">3</strong><span>Acres of Gardens</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="about-cta">
+    <div class="container">
+      <span class="eyebrow centered">Come and see</span>
+      <h2 class="section-heading">The best way to understand <em>is to arrive.</em></h2>
+      <p>We would be delighted to welcome you. Reserve a room, or write to us with your plans.</p>
+      <div class="flex wrap gap-3 justify-center">
+        <a class="btn btn-gold" href="/booking">Reserve Your Stay <i data-lucide="arrow-up-right"></i></a>
+        <a class="btn btn-outline" href="/contact">Contact Us</a>
+      </div>
+    </div>
+  </section>
+</section>
+
+<%- include('partials/footer') %>

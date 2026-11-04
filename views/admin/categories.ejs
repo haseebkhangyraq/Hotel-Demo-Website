@@ -1,0 +1,65 @@
+<%- include('partials/head') %>
+
+<div class="admin-page-head">
+  <div>
+    <span class="admin-eyebrow">Inventory</span>
+    <h1>Room Categories</h1>
+    <p>Eleven room types, one rate card. Pricing changes apply to future reservations immediately.</p>
+  </div>
+  <div class="admin-actions">
+    <a class="admin-btn admin-btn-ghost" href="/admin/rooms"><i data-lucide="bed-double"></i> Manage rooms</a>
+    <a class="admin-btn admin-btn-gold" href="/rooms" target="_blank" rel="noopener"><i data-lucide="external-link"></i> View public page</a>
+  </div>
+</div>
+
+<div class="category-admin-grid">
+  <% categories.forEach(function(cat) { %>
+    <section class="panel category-admin-card">
+      <div class="category-admin-media">
+        <img src="<%= cat.cover_image %>" alt="<%= cat.name %>">
+        <div>
+          <span class="admin-eyebrow">From <%= money(cat.price) %> / night</span>
+          <h2><%= cat.name %></h2>
+          <p><%= cat.room_count %> key<%= cat.room_count === 1 ? '' : 's' %> · <%= cat.size_sqm %> m² · up to <%= cat.max_adults + cat.max_children %> guests</p>
+        </div>
+        <% if (cat.featured) { %><span class="badge featured">Featured</span><% } %>
+      </div>
+      <form class="panel-body admin-form-grid" action="/admin/categories/<%= cat.id %>" method="post">
+        <div class="admin-field">
+          <label class="admin-label" for="catName<%= cat.id %>">Display name</label>
+          <input class="admin-input" id="catName<%= cat.id %>" name="name" value="<%= cat.name %>">
+        </div>
+        <div class="admin-field">
+          <label class="admin-label" for="catTagline<%= cat.id %>">Tagline</label>
+          <input class="admin-input" id="catTagline<%= cat.id %>" name="tagline" value="<%= cat.tagline %>">
+        </div>
+        <div class="admin-field">
+          <label class="admin-label" for="catPrice<%= cat.id %>">Rate per night (PKR)</label>
+          <input class="admin-input" id="catPrice<%= cat.id %>" name="price" type="number" min="0" step="500" value="<%= cat.price %>">
+        </div>
+        <div class="admin-field">
+          <label class="admin-label" for="catSize<%= cat.id %>">Size (m²)</label>
+          <input class="admin-input" id="catSize<%= cat.id %>" name="size_sqm" type="number" min="1" value="<%= cat.size_sqm %>">
+        </div>
+        <div class="admin-field">
+          <label class="admin-label" for="catAdults<%= cat.id %>">Max adults</label>
+          <input class="admin-input" id="catAdults<%= cat.id %>" name="max_adults" type="number" min="1" value="<%= cat.max_adults %>">
+        </div>
+        <div class="admin-field">
+          <label class="admin-label" for="catChildren<%= cat.id %>">Max children</label>
+          <input class="admin-input" id="catChildren<%= cat.id %>" name="max_children" type="number" min="0" value="<%= cat.max_children %>">
+        </div>
+        <label class="admin-checkbox span-2">
+          <input type="checkbox" name="featured" value="1" <%= cat.featured ? 'checked' : '' %>>
+          <span>Feature this category on the homepage</span>
+        </label>
+        <div class="admin-form-actions span-2">
+          <button class="admin-btn admin-btn-gold" type="submit"><i data-lucide="save"></i> Save changes</button>
+          <span class="admin-help">Slug: <code><%= cat.slug %></code></span>
+        </div>
+      </form>
+    </section>
+  <% }); %>
+</div>
+
+<%- include('partials/foot') %>

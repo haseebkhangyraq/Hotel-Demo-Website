@@ -1,0 +1,70 @@
+<%- include('partials/head') %>
+
+<div class="admin-page-head">
+  <div>
+    <span class="admin-eyebrow">Kitchen</span>
+    <h1>Dining Menu</h1>
+    <p>Thirty dishes across the hotel’s restaurants, in-room dining and seasonal menus.</p>
+  </div>
+  <div class="admin-actions">
+    <a class="admin-btn admin-btn-ghost" href="/dining" target="_blank" rel="noopener"><i data-lucide="external-link"></i> View menu</a>
+    <a class="admin-btn admin-btn-gold" href="/admin/dining/new"><i data-lucide="plus"></i> New dish</a>
+  </div>
+</div>
+
+<div class="admin-filter-bar">
+  <div class="admin-tabs scrollable" role="tablist" aria-label="Filter menu by category">
+    <a class="admin-tab <%= category === 'all' ? 'is-active' : '' %>" href="/admin/dining">All dishes</a>
+    <% categories.forEach(function(cat) { %>
+      <a class="admin-tab <%= category === cat ? 'is-active' : '' %>" href="/admin/dining?category=<%= encodeURIComponent(cat) %>"><%= cat %></a>
+    <% }); %>
+  </div>
+</div>
+
+<section class="panel">
+  <div class="panel-head">
+    <div><span class="panel-eyebrow"><%= items.length %> dish<%= items.length === 1 ? '' : 'es' %></span><h2 class="panel-title"><%= category === 'all' ? 'Full menu' : category %></h2></div>
+  </div>
+  <% if (items.length) { %>
+    <div class="table-wrap">
+      <table class="admin-table">
+        <thead><tr><th>Dish</th><th>Category</th><th>Price</th><th>Dietary</th><th>Room service</th><th>Status</th><th class="cell-action">Manage</th></tr></thead>
+        <tbody>
+          <% items.forEach(function(item) {
+            let dietary = [];
+            try { dietary = JSON.parse(item.dietary || '[]'); } catch (e) { dietary = []; }
+          %>
+            <tr>
+              <td>
+                <span class="dish-cell">
+                  <img src="<%= item.image %>" alt="" loading="lazy">
+                  <span>
+                    <span class="table-strong"><%= item.name %><%= item.featured ? ' · Chef’s selection' : '' %></span>
+                    <span class="table-sub"><%= item.description %></span>
+                  </span>
+                </span>
+              </td>
+              <td><%= item.category %></td>
+              <td class="table-money"><%= money(item.price) %></td>
+              <td><span class="table-sub"><%= dietary.length ? dietary.join(', ') : '—' %></span></td>
+              <td><%= item.room_service ? 'Yes' : 'No' %></td>
+              <td><span class="badge <%= item.active ? 'active' : 'inactive' %>"><%= item.active ? 'Live' : 'Hidden' %></span></td>
+              <td class="cell-action">
+                <span class="row-actions">
+                  <a class="admin-icon-btn" href="/admin/dining/<%= item.id %>" aria-label="Edit <%= item.name %>"><i data-lucide="pencil"></i></a>
+                  <form action="/admin/dining/<%= item.id %>/delete" method="post" data-confirm="Remove “<%= item.name %>” from the menu?">
+                    <button class="admin-icon-btn danger" type="submit" aria-label="Delete <%= item.name %>"><i data-lucide="trash-2"></i></button>
+                  </form>
+                </span>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  <% } else { %>
+    <div class="admin-empty"><i data-lucide="utensils"></i><h3>No dishes in this category</h3><p>Add a dish or choose another category.</p><a class="admin-btn admin-btn-gold" href="/admin/dining/new">New dish</a></div>
+  <% } %>
+</section>
+
+<%- include('partials/foot') %>

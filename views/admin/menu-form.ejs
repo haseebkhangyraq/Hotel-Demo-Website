@@ -1,0 +1,102 @@
+<%
+  const isEdit = Boolean(item);
+  const action = isEdit ? '/admin/dining/' + item.id : '/admin/dining';
+  const v = function(key, fallback) { return item && item[key] !== null && item[key] !== undefined ? item[key] : (fallback === undefined ? '' : fallback); };
+  let dietaryText = '';
+  if (item) {
+    try { dietaryText = JSON.parse(item.dietary || '[]').join(', '); } catch (e) { dietaryText = ''; }
+  }
+%>
+<%- include('partials/head') %>
+
+<div class="admin-breadcrumb">
+  <a href="/admin/dining"><i data-lucide="arrow-left"></i> Dining menu</a>
+</div>
+
+<div class="admin-page-head">
+  <div>
+    <span class="admin-eyebrow"><%= isEdit ? 'Edit dish' : 'New dish' %></span>
+    <h1><%= isEdit ? item.name : 'Add to the menu' %></h1>
+    <p>Changes appear on the public dining page immediately.</p>
+  </div>
+</div>
+
+<div class="admin-detail-grid">
+  <div class="admin-detail-main">
+    <section class="panel">
+      <div class="panel-head"><div><span class="panel-eyebrow">Dish details</span><h2 class="panel-title">Menu entry</h2></div></div>
+      <div class="panel-body">
+        <form action="<%= action %>" method="post" class="admin-form-grid">
+          <div class="admin-field span-2">
+            <label class="admin-label" for="dishName">Dish name</label>
+            <input class="admin-input" id="dishName" name="name" value="<%= v('name') %>" placeholder="Himalayan Trout, Brown Butter" required>
+          </div>
+          <div class="admin-field">
+            <label class="admin-label" for="dishCategory">Category</label>
+            <select class="admin-input" id="dishCategory" name="category">
+              <% categories.forEach(function(cat) { %>
+                <option value="<%= cat %>" <%= v('category') === cat ? 'selected' : '' %>><%= cat %></option>
+              <% }); %>
+            </select>
+          </div>
+          <div class="admin-field">
+            <label class="admin-label" for="dishPrice">Price (PKR)</label>
+            <input class="admin-input" id="dishPrice" name="price" type="number" min="0" step="50" value="<%= v('price', 0) %>" required>
+          </div>
+          <div class="admin-field span-2">
+            <label class="admin-label" for="dishDescription">Description</label>
+            <textarea class="admin-input" id="dishDescription" name="description" rows="3" placeholder="A short, evocative description of the dish."><%= v('description') %></textarea>
+          </div>
+          <div class="admin-field span-2">
+            <label class="admin-label" for="dishImage">Image path</label>
+            <input class="admin-input" id="dishImage" name="image" value="<%= v('image', '/images/food-01.jpg') %>" placeholder="/images/food-01.jpg">
+          </div>
+          <div class="admin-field span-2">
+            <label class="admin-label" for="dishDietary">Dietary labels</label>
+            <input class="admin-input" id="dishDietary" name="dietary" value="<%= dietaryText %>" placeholder="Vegetarian, Gluten-free, Contains nuts">
+            <span class="admin-help">Comma-separated. Leave blank if none apply.</span>
+          </div>
+          <div class="admin-field">
+            <label class="admin-label" for="dishSort">Sort order</label>
+            <input class="admin-input" id="dishSort" name="sort_order" type="number" value="<%= v('sort_order', 0) %>">
+          </div>
+          <div class="admin-checkbox-group">
+            <label class="admin-checkbox">
+              <input type="checkbox" name="featured" value="1" <%= item && item.featured ? 'checked' : '' %>>
+              <span>Chef’s selection</span>
+            </label>
+            <label class="admin-checkbox">
+              <input type="checkbox" name="room_service" value="1" <%= !item || item.room_service ? 'checked' : '' %>>
+              <span>Available in-room</span>
+            </label>
+            <label class="admin-checkbox">
+              <input type="checkbox" name="active" value="1" <%= !item || item.active ? 'checked' : '' %>>
+              <span>Live on menu</span>
+            </label>
+          </div>
+          <div class="admin-form-actions span-2">
+            <button class="admin-btn admin-btn-gold" type="submit"><i data-lucide="save"></i> <%= isEdit ? 'Save dish' : 'Add dish' %></button>
+            <a class="admin-btn admin-btn-ghost" href="/admin/dining">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </section>
+  </div>
+
+  <aside class="admin-detail-side">
+    <section class="panel">
+      <div class="panel-head"><div><span class="panel-eyebrow">Preview</span><h2 class="panel-title">On the menu</h2></div></div>
+      <div class="panel-body">
+        <div class="dish-preview">
+          <img src="<%= v('image', '/images/food-01.jpg') %>" alt="Dish preview">
+          <span><%= v('category') || 'Category' %></span>
+          <strong><%= v('name') || 'Dish name' %></strong>
+          <p><%= v('description') || 'A short description of the dish.' %></p>
+          <em><%= v('price', 0) ? money(Number(v('price', 0))) : 'PKR 0' %></em>
+        </div>
+      </div>
+    </section>
+  </aside>
+</div>
+
+<%- include('partials/foot') %>

@@ -1,0 +1,52 @@
+<%- include('partials/head') %>
+
+<div class="admin-page-head">
+  <div>
+    <span class="admin-eyebrow">Marketing</span>
+    <h1>Offers &amp; Packages</h1>
+    <p>Seasonal invitations, promotional codes and package content across the website.</p>
+  </div>
+  <div class="admin-actions">
+    <a class="admin-btn admin-btn-gold" href="/admin/offers/new"><i data-lucide="plus"></i> New offer</a>
+  </div>
+</div>
+
+<% if (offers.length) { %>
+  <section class="panel">
+    <div class="panel-head">
+      <div><span class="panel-eyebrow"><%= offers.length %> offer<%= offers.length === 1 ? '' : 's' %></span><h2 class="panel-title">All offers</h2></div>
+    </div>
+    <div class="offer-admin-list">
+      <% offers.forEach(function(offer) { %>
+        <article class="offer-admin-row">
+          <div class="offer-admin-media">
+            <img src="<%= offer.image %>" alt="<%= offer.title %>">
+            <% if (offer.featured) { %><span class="badge featured">Featured</span><% } %>
+          </div>
+          <div class="offer-admin-body">
+            <span class="admin-eyebrow"><%= offer.subtitle || 'Offer' %></span>
+            <h3><%= offer.title %></h3>
+            <p><%= offer.description %></p>
+            <div class="offer-admin-meta">
+              <span><i data-lucide="tag"></i> <%= offer.discount_label || offer.discount_percent + '% off' %></span>
+              <% if (offer.promo_code) { %><span class="admin-mono"><%= offer.promo_code %></span><% } %>
+              <span><i data-lucide="calendar"></i> <%= offer.valid_from || 'Open' %> → <%= offer.valid_to || 'Open' %></span>
+              <span class="badge <%= offer.active ? 'active' : 'inactive' %>"><%= offer.active ? 'Live' : 'Hidden' %></span>
+            </div>
+          </div>
+          <div class="offer-admin-actions">
+            <a class="admin-btn admin-btn-ghost" href="/admin/offers/<%= offer.id %>"><i data-lucide="pencil"></i> Edit</a>
+            <a class="admin-btn admin-btn-ghost" href="/offers" target="_blank" rel="noopener"><i data-lucide="external-link"></i> View</a>
+            <form action="/admin/offers/<%= offer.id %>/delete" method="post" data-confirm="Delete “<%= offer.title %>”? This cannot be undone.">
+              <button class="admin-btn admin-btn-danger" type="submit"><i data-lucide="trash-2"></i> Delete</button>
+            </form>
+          </div>
+        </article>
+      <% }); %>
+    </div>
+  </section>
+<% } else { %>
+  <section class="panel"><div class="admin-empty"><i data-lucide="ticket"></i><h3>No offers yet</h3><p>Create a seasonal package or promotional code.</p><a class="admin-btn admin-btn-gold" href="/admin/offers/new">Create an offer</a></div></section>
+<% } %>
+
+<%- include('partials/foot') %>

@@ -1,0 +1,159 @@
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-top">
+      <div class="container">
+        <div class="footer-intro">
+          <span class="eyebrow light">Stay in the know</span>
+          <h2 class="footer-heading">Letters from <em>Aurelia</em></h2>
+          <p>Seasonal menus, quiet offers and the occasional invitation. Delivered rarely, and always beautifully.</p>
+          <form class="newsletter-form" id="newsletterForm" novalidate>
+            <label class="sr-only" for="newsletterEmail">Email address</label>
+            <input type="email" id="newsletterEmail" name="email" placeholder="Your email address" required>
+            <button type="submit" aria-label="Subscribe to the Journal"><i data-lucide="arrow-right"></i></button>
+            <p class="form-status" data-status aria-live="polite"></p>
+          </form>
+        </div>
+
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a href="/" class="brand brand-footer" aria-label="Grand Aurelia — Home">
+              <svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true">
+                <circle cx="24" cy="24" r="22.5" fill="none" stroke="currentColor" stroke-width="0.8"/>
+                <path d="M24 10 34.5 38H28.7L24 23.4 19.3 38H13.5L24 10Z" fill="currentColor"/>
+                <circle cx="24" cy="42.5" r="1.15" fill="currentColor"/>
+              </svg>
+              <span class="brand-type">
+                <span class="brand-name">GRAND AURELIA</span>
+                <span class="brand-sub">HOTEL &amp; RESORT</span>
+              </span>
+            </a>
+            <p class="footer-tagline"><%= settings.tagline %></p>
+            <div class="footer-socials">
+              <a href="<%= settings.instagram %>" target="_blank" rel="noopener" aria-label="Instagram"><i data-lucide="instagram"></i></a>
+              <a href="<%= settings.facebook %>" target="_blank" rel="noopener" aria-label="Facebook"><i data-lucide="facebook"></i></a>
+              <a href="https://wa.me/<%= settings.whatsapp_digits %>" target="_blank" rel="noopener" aria-label="WhatsApp"><i data-lucide="message-circle"></i></a>
+            </div>
+          </div>
+
+          <div class="footer-col">
+            <h3>Stay</h3>
+            <a href="/rooms">Rooms &amp; Suites</a>
+            <a href="/offers">Offers &amp; Packages</a>
+            <a href="/booking">Reservations</a>
+            <a href="/guest-services">Guest Services</a>
+            <a href="/gallery">Gallery</a>
+          </div>
+
+          <div class="footer-col">
+            <h3>Discover</h3>
+            <a href="/dining">Dining Menu</a>
+            <a href="/experiences">Experiences</a>
+            <a href="/facilities">Facilities</a>
+            <a href="/events">Meetings &amp; Events</a>
+            <a href="/about">Our Story</a>
+          </div>
+
+          <div class="footer-col footer-contact">
+            <h3>Find Us</h3>
+            <p><%= settings.address %><br><%= settings.city %>, <%= settings.country %></p>
+            <a href="tel:<%= settings.phone.replace(/[^+\d]/g, '') %>"><%= settings.phone %></a>
+            <a href="mailto:<%= settings.email %>"><%= settings.email %></a>
+            <a class="footer-directions" href="<%= settings.maps_url %>" target="_blank" rel="noopener">Get directions <i data-lucide="arrow-up-right" class="icon-xs"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-awards">
+      <div class="container awards-row">
+        <span>Forbes Travel Guide <em>Five Star</em></span>
+        <span class="award-dot" aria-hidden="true"></span>
+        <span>Condé Nast Gold List <em>2026</em></span>
+        <span class="award-dot" aria-hidden="true"></span>
+        <span>Travel + Leisure <em>World's Best</em></span>
+        <span class="award-dot" aria-hidden="true"></span>
+        <span>Relais &amp; Châteaux <em>Member</em></span>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="container footer-bottom-row">
+        <p>© <span id="year">2026</span> <%= settings.hotel_name %>. A fictional hotel, created for demonstration.</p>
+        <div class="footer-legal">
+          <a href="/privacy">Privacy</a>
+          <a href="/terms">Terms</a>
+          <a href="/admin">Hotel Login</a>
+        </div>
+      </div>
+      <p class="footer-note"><%= settings.footer_note %></p>
+    </div>
+  </footer>
+
+  <div class="floating-dock">
+    <button class="back-to-top" id="backToTop" aria-label="Back to top"><i data-lucide="arrow-up"></i></button>
+    <a class="whatsapp-fab" href="https://wa.me/<%= settings.whatsapp_digits %>?text=<%= encodeURIComponent('Hello Grand Aurelia Hotel, I would like to inquire about room availability and reservations.') %>" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+      <i data-lucide="message-circle"></i>
+      <span class="fab-tooltip">WhatsApp us</span>
+    </a>
+    <button class="concierge-fab" id="conciergeOpen" aria-label="Ask Aurelia AI" aria-expanded="false" aria-controls="conciergePanel">
+      <span class="concierge-fab-mark" aria-hidden="true">
+        <svg viewBox="0 0 48 48"><path d="M24 10 34.5 38H28.7L24 23.4 19.3 38H13.5L24 10Z" fill="currentColor"/></svg>
+      </span>
+      <span class="concierge-fab-text">Ask Aurelia AI</span>
+      <span class="concierge-pulse" aria-hidden="true"></span>
+    </button>
+  </div>
+
+  <div class="concierge-backdrop" id="conciergeBackdrop" hidden></div>
+  <aside class="concierge-panel" id="conciergePanel" aria-hidden="true" aria-label="Aurelia AI concierge">
+    <div class="concierge-head">
+      <div class="concierge-identity">
+        <span class="concierge-avatar" aria-hidden="true">
+          <svg viewBox="0 0 48 48"><path d="M24 10 34.5 38H28.7L24 23.4 19.3 38H13.5L24 10Z" fill="currentColor"/></svg>
+        </span>
+        <div>
+          <h2>Aurelia <em>AI</em></h2>
+          <p><span class="status-dot"></span> Concierge · Demo assistant</p>
+        </div>
+      </div>
+      <button class="concierge-close" id="conciergeClose" aria-label="Close concierge"><i data-lucide="x"></i></button>
+    </div>
+    <div class="concierge-messages" id="conciergeMessages" aria-live="polite">
+      <div class="chat-message bot">
+        <div class="chat-avatar">A</div>
+        <div class="chat-bubble">
+          <p>Good evening. I am Aurelia, your digital concierge. I can help with rooms, dining, facilities, spa rituals and reservations.</p>
+          <p class="chat-note">This is a demo assistant with carefully prepared answers.</p>
+        </div>
+      </div>
+    </div>
+    <div class="concierge-suggestions" id="conciergeSuggestions">
+      <button type="button">Find me a luxury room</button>
+      <button type="button">What are your room prices?</button>
+      <button type="button">Do you have a swimming pool?</button>
+      <button type="button">Show me your dining menu</button>
+    </div>
+    <form class="concierge-form" id="conciergeForm">
+      <label class="sr-only" for="conciergeInput">Ask Aurelia AI</label>
+      <input id="conciergeInput" type="text" placeholder="Ask about rooms, dining, spa…" autocomplete="off" maxlength="240">
+      <button type="submit" aria-label="Send message"><i data-lucide="arrow-up"></i></button>
+    </form>
+    <div class="concierge-foot">
+      <span><i data-lucide="sparkles" class="icon-xs"></i> Demo AI · Not a real AI service</span>
+      <button type="button" id="conciergeReset">Start again</button>
+    </div>
+  </aside>
+
+  <script src="/vendor/gsap/gsap.min.js"></script>
+  <script src="/vendor/gsap/ScrollTrigger.min.js"></script>
+  <script src="/vendor/lucide/lucide.min.js"></script>
+  <script src="/vendor/swiper/swiper-bundle.min.js"></script>
+  <script src="/js/main.js?v=1.1"></script>
+
+  <script>
+    window.AURELIA_SETTINGS = <%- JSON.stringify({ whatsapp: settings.whatsapp_digits, phone: settings.phone, email: settings.email, checkIn: settings.checkin_time, checkOut: settings.checkout_time, currency: settings.currency }) %>;
+  </script>
+  <%- typeof pageScripts !== 'undefined' ? pageScripts : '' %>
+</body>
+</html>

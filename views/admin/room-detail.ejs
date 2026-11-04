@@ -1,0 +1,121 @@
+<%- include('partials/head') %>
+
+<div class="admin-breadcrumb">
+  <a href="/admin/rooms"><i data-lucide="arrow-left"></i> All rooms</a>
+</div>
+
+<div class="admin-page-head">
+  <div>
+    <span class="admin-eyebrow">Room record</span>
+    <h1>Room <%= room.room_number %></h1>
+    <p><%= room.category_name %> · Level <%= room.floor %> · <span class="badge <%= room.status %>"><%= room.status %></span></p>
+  </div>
+  <div class="admin-actions">
+    <a class="admin-btn admin-btn-ghost" href="/admin/categories"><i data-lucide="layers"></i> Categories</a>
+  </div>
+</div>
+
+<div class="admin-detail-grid">
+  <div class="admin-detail-main">
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <span class="panel-eyebrow">Room details</span>
+          <h2 class="panel-title">Edit room</h2>
+        </div>
+      </div>
+      <div class="panel-body">
+        <form action="/admin/rooms/<%= room.id %>" method="post" class="admin-form-grid">
+          <div class="admin-field">
+            <label class="admin-label" for="editCategory">Category</label>
+            <select class="admin-input" id="editCategory" name="category_id">
+              <% categories.forEach(function(cat) { %>
+                <option value="<%= cat.id %>" <%= room.category_id === cat.id ? 'selected' : '' %>><%= cat.name %></option>
+              <% }); %>
+            </select>
+          </div>
+          <div class="admin-field">
+            <label class="admin-label" for="editFloor">Floor</label>
+            <input class="admin-input" id="editFloor" name="floor" type="number" min="0" max="30" value="<%= room.floor %>">
+          </div>
+          <div class="admin-field">
+            <label class="admin-label" for="editStatus">Housekeeping status</label>
+            <select class="admin-input" id="editStatus" name="status">
+              <% ['available','occupied','reserved','maintenance'].forEach(function(s) { %>
+                <option value="<%= s %>" <%= room.status === s ? 'selected' : '' %>><%= s %></option>
+              <% }); %>
+            </select>
+          </div>
+          <div class="admin-field span-2">
+            <label class="admin-label" for="editNotes">Notes</label>
+            <input class="admin-input" id="editNotes" name="notes" value="<%= room.notes || '' %>" placeholder="Housekeeping or guest notes">
+          </div>
+          <div class="admin-form-actions span-2">
+            <button class="admin-btn admin-btn-gold" type="submit"><i data-lucide="save"></i> Save room</button>
+            <a class="admin-btn admin-btn-ghost" href="/admin/rooms">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <span class="panel-eyebrow">Occupancy</span>
+          <h2 class="panel-title">Recent stays in this room</h2>
+        </div>
+      </div>
+      <% if (history.length) { %>
+        <div class="table-wrap">
+          <table class="admin-table compact">
+            <thead><tr><th>Reference</th><th>Guest</th><th>Stay</th><th>Status</th></tr></thead>
+            <tbody>
+              <% history.forEach(function(h) { %>
+                <tr>
+                  <td><a class="table-ref" href="/admin/bookings?q=<%= h.reference %>"><%= h.reference %></a></td>
+                  <td><%= h.guest_name %></td>
+                  <td><%= h.check_in %> → <%= h.check_out %></td>
+                  <td><span class="badge <%= h.booking_status %>"><%= h.booking_status.replace('_', ' ') %></span></td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      <% } else { %>
+        <div class="panel-body"><p class="admin-help">No stays recorded for this room.</p></div>
+      <% } %>
+    </section>
+  </div>
+
+  <aside class="admin-detail-side">
+    <section class="panel">
+      <div class="panel-head"><div><span class="panel-eyebrow">At a glance</span><h2 class="panel-title">Status</h2></div></div>
+      <div class="panel-body">
+        <div class="room-status-card <%= room.status %>">
+          <span class="room-dot <%= room.status %>"></span>
+          <strong><%= room.status %></strong>
+          <p>Room <%= room.room_number %> · <%= room.category_name %></p>
+        </div>
+        <div class="detail-list">
+          <div><span>Floor</span><strong>Level <%= room.floor %></strong></div>
+          <div><span>Category</span><strong><%= room.category_name %></strong></div>
+          <div><span>Created</span><strong><%= dateLabel(String(room.created_at).slice(0, 10)) %></strong></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head"><div><span class="panel-eyebrow">Quick change</span><h2 class="panel-title">Housekeeping</h2></div></div>
+      <div class="panel-body stack">
+        <% ['available','occupied','reserved','maintenance'].forEach(function(s) { %>
+          <form action="/admin/rooms/<%= room.id %>/status" method="post">
+            <input type="hidden" name="status" value="<%= s %>">
+            <button class="admin-btn <%= room.status === s ? 'admin-btn-gold' : 'admin-btn-ghost' %> btn-block" type="submit"><span class="room-dot <%= s %>"></span> Mark <%= s %></button>
+          </form>
+        <% }); %>
+      </div>
+    </section>
+  </aside>
+</div>
+
+<%- include('partials/foot') %>

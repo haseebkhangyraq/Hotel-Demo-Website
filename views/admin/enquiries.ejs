@@ -1,0 +1,71 @@
+<%- include('partials/head') %>
+
+<div class="admin-page-head">
+  <div>
+    <span class="admin-eyebrow">Inbox</span>
+    <h1>Enquiries &amp; Requests</h1>
+    <p>Event proposals, experience enquiries, guest-service requests and newsletter subscriptions.</p>
+  </div>
+</div>
+
+<div class="admin-filter-bar">
+  <div class="admin-tabs scrollable" role="tablist" aria-label="Filter enquiries">
+    <% const types = [
+      ['all', 'All', counts.all],
+      ['event', 'Events', counts.event],
+      ['experience', 'Experiences', counts.experience],
+      ['guest-service', 'Guest services', counts['guest-service']],
+      ['contact', 'Contact', counts.contact],
+      ['newsletter', 'Journal', counts.newsletter]
+    ]; %>
+    <% types.forEach(function(t) { %>
+      <a class="admin-tab <%= type === t[0] ? 'is-active' : '' %>" href="/admin/enquiries?type=<%= t[0] %>"><%= t[1] %><span><%= t[2] %></span></a>
+    <% }); %>
+  </div>
+</div>
+
+<% if (enquiries.length) { %>
+  <div class="enquiry-admin-list">
+    <% enquiries.forEach(function(e) {
+      let details = {};
+      try { details = parseJson(e.details, {}); } catch (err) { details = {}; }
+      const detailPairs = Object.entries(details || {}).filter(function(pair) { return pair[1] !== null && pair[1] !== '' && pair[1] !== false; });
+    %>
+      <article class="panel enquiry-admin-card">
+        <div class="enquiry-admin-head">
+          <div>
+            <span class="admin-eyebrow"><%= e.type.replace('-', ' ') %> · #<%= e.id %></span>
+            <h2><%= e.subject || 'Enquiry' %></h2>
+            <p><strong><%= e.name %></strong> · <a href="mailto:<%= e.email %>"><%= e.email %></a><%= e.phone ? ' · ' + e.phone : '' %></p>
+          </div>
+          <span class="badge status-<%= e.status %>"><%= e.status.replace('_', ' ') %></span>
+        </div>
+        <div class="panel-body">
+          <p class="enquiry-message"><%= e.message %></p>
+          <% if (detailPairs.length) { %>
+            <div class="admin-tag-list">
+              <% detailPairs.forEach(function(pair) { %>
+                <span><strong><%= pair[0] %>:</strong> <%= typeof pair[1] === 'object' ? JSON.stringify(pair[1]) : pair[1] %></span>
+              <% }); %>
+            </div>
+          <% } %>
+          <div class="enquiry-admin-foot">
+            <span class="admin-help"><i data-lucide="clock"></i> <%= dateLabel(String(e.created_at).slice(0, 10)) %></span>
+            <form action="/admin/enquiries/<%= e.id %>/status" method="post" class="inline-status">
+              <select name="status" class="admin-select-mini" aria-label="Status for enquiry <%= e.id %>" data-auto-submit>
+                <% ['new','read','in_progress','resolved'].forEach(function(s) { %>
+                  <option value="<%= s %>" <%= e.status === s ? 'selected' : '' %>><%= s.replace('_', ' ') %></option>
+                <% }); %>
+              </select>
+              <button class="admin-btn admin-btn-ghost btn-sm" type="submit">Update</button>
+            </form>
+          </div>
+        </div>
+      </article>
+    <% }); %>
+  </div>
+<% } else { %>
+  <section class="panel"><div class="admin-empty"><i data-lucide="inbox"></i><h3>Nothing here yet</h3><p>New enquiries will appear in this inbox.</p></div></section>
+<% } %>
+
+<%- include('partials/foot') %>
